@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Lock, UserCheck, ShieldAlert, KeyRound } from 'lucide-react';
+import { Lock, UserCheck, ShieldAlert, KeyRound, Info, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
-export default function LoginPage() {
+export default function LoginPage({ onOpenAbout }) {
   const { loginUser, activeDeviceId, setDevice } = useAuth();
   const [username, setUsername] = useState('dosen_budi');
   const [password, setPassword] = useState('password123');
@@ -56,12 +56,53 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-12 px-4">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-extrabold text-white tracking-tight">Sistem Akademik Zero Trust</h1>
-        <p className="text-slate-400 mt-2 text-sm">
-          Penerapan NIST SP 800-207: Kontrol Akses Berbasis Identitas, Perangkat & Jam Akses
-        </p>
+    <div className="max-w-4xl mx-auto py-8 px-4 space-y-8">
+      {/* Banner Penjelasan Sistem */}
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1.5 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/30">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              Arsitektur Keamanan Zero Trust (NIST SP 800-207)
+            </div>
+            <h1 className="text-2xl font-extrabold text-white tracking-tight">
+              Sistem Pengelolaan Nilai & Transkrip Akademik
+            </h1>
+            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+              Sistem ini menerapkan validasi identitas, verifikasi perangkat pengirim (<code className="text-emerald-400">X-Device-ID</code>), pembatasan jam operasional, serta isolasi backend service secara ketat.
+            </p>
+          </div>
+
+          <button
+            onClick={onOpenAbout}
+            className="flex-shrink-0 inline-flex items-center gap-2 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 px-4 py-2.5 rounded-xl text-xs font-semibold transition"
+          >
+            <Info className="w-4 h-4" />
+            Penjelasan Lengkap Sistem
+          </button>
+        </div>
+
+        {/* Ringkasan Kemampuan Sistem */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5 pt-5 border-t border-slate-800/80 text-xs">
+          <div className="flex items-start gap-2 text-slate-300">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <span className="font-semibold text-slate-100">Dosen:</span> Kelola nilai kelas diampu, edit pada jam operasional, dan finalisasi sinkron ke transkrip.
+            </div>
+          </div>
+          <div className="flex items-start gap-2 text-slate-300">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <span className="font-semibold text-slate-100">Mahasiswa:</span> Pantau nilai kelas berjalan & transkrip resmi miliknya sendiri secara privat.
+            </div>
+          </div>
+          <div className="flex items-start gap-2 text-slate-300">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <span className="font-semibold text-slate-100">Admin & Auditor:</span> Periksa transkrip semua mahasiswa & monitor live audit log keputusan Policy Engine.
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -122,7 +163,7 @@ export default function LoginPage() {
           </form>
         </div>
 
-        {/* Quick User Selector (Untuk Demo Video) */}
+        {/* Quick User Selector */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
           <div className="flex items-center gap-2 mb-4 text-emerald-400">
             <UserCheck className="w-5 h-5" />
