@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { ShieldCheck, Laptop, Clock, AlertTriangle, RefreshCw } from 'lucide-react';
+import { ShieldCheck, Laptop, Clock } from 'lucide-react';
 
 export default function ZeroTrustBar() {
-  const { activeDeviceId, setDevice, simulatedHour, setSimulatedHour, user } = useAuth();
+  const { activeDeviceId, setDevice, simulatedHour, setSimulatedHour } = useAuth();
   const [deviceList, setDeviceList] = useState([]);
 
   useEffect(() => {
@@ -18,30 +18,32 @@ export default function ZeroTrustBar() {
   const isWorkHour = parseInt(simulatedHour) >= 7 && parseInt(simulatedHour) <= 21;
 
   return (
-    <div className="bg-slate-900 border-b border-indigo-900/60 px-6 py-2.5 text-sm flex flex-wrap items-center justify-between gap-4 shadow-lg sticky top-0 z-50 backdrop-blur-md bg-opacity-95">
+    <div className="bg-midnight-canvas/90 border-b border-glass-edge px-4 sm:px-6 py-2.5 text-xs flex flex-wrap items-center justify-between gap-3 sticky top-0 z-50 backdrop-blur-xl">
       {/* Branding Badge */}
-      <div className="flex items-center gap-2">
-        <div className="bg-indigo-600/30 p-1.5 rounded-lg border border-indigo-500/40 text-indigo-400">
-          <ShieldCheck className="w-5 h-5" />
+      <div className="flex items-center gap-2.5">
+        <div className="w-7 h-7 rounded-full bg-steel-plate/60 border border-glass-edge flex items-center justify-center text-frost-glow">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
         </div>
-        <div>
-          <span className="font-semibold text-white tracking-wide text-xs uppercase px-2 py-0.5 rounded bg-indigo-950 border border-indigo-700/50">
-            NIST SP 800-207
+        <div className="flex items-center gap-2">
+          <span className="font-mono font-medium text-[11px] text-pure-white">
+            PEP CONTROLLER
           </span>
-          <span className="ml-2 font-bold text-slate-200">Zero Trust PEP Controller</span>
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-steel-plate/40 text-moon-mist border border-glass-edge">
+            PDP ACTIVE
+          </span>
         </div>
       </div>
 
       {/* Simulator Controls */}
-      <div className="flex items-center flex-wrap gap-4">
+      <div className="flex items-center flex-wrap gap-3">
         {/* Device ID Selector */}
-        <div className="flex items-center gap-2 bg-slate-800/90 px-3 py-1.5 rounded-lg border border-slate-700">
-          <Laptop className="w-4 h-4 text-emerald-400" />
-          <span className="text-xs text-slate-400 font-medium">Header X-Device-ID:</span>
+        <div className="flex items-center gap-2 bg-steel-plate/30 px-3 py-1.5 rounded-full border border-glass-edge">
+          <Laptop className="w-3.5 h-3.5 text-emerald-400" />
+          <span className="text-[11px] text-moon-mist font-medium">Header X-Device-ID:</span>
           <select
             value={activeDeviceId}
             onChange={(e) => setDevice(e.target.value)}
-            className="bg-slate-900 text-xs font-mono text-emerald-300 font-semibold rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-indigo-500"
+            className="bg-midnight-canvas text-[11px] font-mono text-emerald-300 font-medium rounded-full px-2.5 py-0.5 border border-glass-edge focus:outline-none focus:border-void-violet cursor-pointer"
           >
             <optgroup label="Perangkat Resmi (Terdaftar)">
               {deviceList.map(d => (
@@ -51,31 +53,33 @@ export default function ZeroTrustBar() {
               ))}
             </optgroup>
             <optgroup label="Simulasi Device Ilegal / Tidak Terdaftar">
-              <option value="DEV-HACKER-UNREGISTERED">DEV-HACKER-UNREGISTERED (Ditolak)</option>
-              <option value="DEV-UNKNOWN-DEVICE">DEV-UNKNOWN-DEVICE (Ditolak)</option>
+              <option value="DEV-HACKER-UNREGISTERED">DEV-HACKER-UNREGISTERED (Ditolak PEP)</option>
+              <option value="DEV-UNKNOWN-DEVICE">DEV-UNKNOWN-DEVICE (Ditolak PEP)</option>
             </optgroup>
           </select>
         </div>
 
         {/* Time Simulator */}
-        <div className="flex items-center gap-2 bg-slate-800/90 px-3 py-1.5 rounded-lg border border-slate-700">
-          <Clock className={`w-4 h-4 ${isWorkHour ? 'text-blue-400' : 'text-amber-400'}`} />
-          <span className="text-xs text-slate-400 font-medium">Jam Akses:</span>
+        <div className="flex items-center gap-2 bg-steel-plate/30 px-3 py-1.5 rounded-full border border-glass-edge">
+          <Clock className={`w-3.5 h-3.5 ${isWorkHour ? 'text-frost-glow' : 'text-amber-400'}`} />
+          <span className="text-[11px] text-moon-mist font-medium">Simulasi Jam:</span>
           <select
             value={simulatedHour}
             onChange={(e) => setSimulatedHour(e.target.value)}
-            className="bg-slate-900 text-xs font-mono font-semibold rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-indigo-500 text-slate-200"
+            className="bg-midnight-canvas text-[11px] font-mono font-medium rounded-full px-2.5 py-0.5 border border-glass-edge focus:outline-none focus:border-void-violet text-pure-white cursor-pointer"
           >
-            <option value="10">10:00 (Jam Kerja 07.00 - 21.00 - ALLOW)</option>
-            <option value="14">14:00 (Jam Kerja 07.00 - 21.00 - ALLOW)</option>
-            <option value="23">23:00 (Luar Jam Kerja - DENY Perubahan Nilai)</option>
-            <option value="03">03:00 (Dini Hari - DENY Perubahan Nilai)</option>
+            <option value="10">10:00 (Jam Kerja 07:00 - 21:00 · ALLOW)</option>
+            <option value="14">14:00 (Jam Kerja 07:00 - 21:00 · ALLOW)</option>
+            <option value="23">23:00 (Luar Jam Kerja · DENY Mutasi)</option>
+            <option value="03">03:00 (Dini Hari · DENY Mutasi)</option>
           </select>
 
-          <span className={`text-[11px] font-bold px-2 py-0.5 rounded ${
-            isWorkHour ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-rose-950 text-rose-300 border border-rose-800'
+          <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border font-semibold ${
+            isWorkHour 
+              ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30' 
+              : 'bg-rose-500/10 text-rose-300 border-rose-500/30'
           }`}>
-            {isWorkHour ? 'OPERASIONAL AKTIF' : 'DILUAR JAM KERJA'}
+            {isWorkHour ? 'JAM KERJA' : 'DILUAR JAM'}
           </span>
         </div>
       </div>

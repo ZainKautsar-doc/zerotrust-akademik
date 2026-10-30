@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { apiRequest } from '../services/api';
-import { GraduationCap, Award, FileText, AlertCircle } from 'lucide-react';
+import { GraduationCap, Award, FileText, AlertCircle, RefreshCw } from 'lucide-react';
 
 export default function MhsPage() {
   const { authContextHeaders, user } = useAuth();
@@ -37,74 +37,89 @@ export default function MhsPage() {
   return (
     <div className="space-y-6">
       {alert && (
-        <div className="p-4 rounded-xl text-sm border bg-rose-950/80 border-rose-800 text-rose-300 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <AlertCircle className="w-5 h-5" />
+        <div className="p-4 rounded-card text-xs sm:text-sm border bg-rose-950/60 border-rose-500/40 text-rose-200 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />
             <span>{alert}</span>
           </div>
-          <button onClick={() => setAlert(null)} className="text-xs underline ml-4">Tutup</button>
+          <button onClick={() => setAlert(null)} className="text-xs underline ml-4 cursor-pointer text-moon-mist hover:text-pure-white">
+            Tutup
+          </button>
         </div>
       )}
 
-      {/* Profil Mahasiswa Banner */}
-      <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-wrap items-center justify-between gap-4">
+      {/* Profil Mahasiswa Banner (Frosted Glass Card) */}
+      <div className="glass-panel p-6 sm:p-7 flex flex-wrap items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-emerald-600/20 border border-emerald-500/40 rounded-2xl flex items-center justify-center text-emerald-400">
-            <GraduationCap className="w-8 h-8" />
+          <div className="w-14 h-14 rounded-full bg-steel-plate/60 border border-glass-edge flex items-center justify-center text-frost-glow shadow-sm">
+            <GraduationCap className="w-7 h-7 text-frost-glow" />
           </div>
-          <div>
-            <h2 className="text-xl font-bold text-slate-100">{user?.fullName}</h2>
-            <p className="text-xs text-slate-400 font-mono mt-0.5">
-              NIM: <span className="text-cyan-400 font-bold">{user?.nim_or_nip}</span> | Perangkat:{' '}
-              <span className="text-emerald-400">{authContextHeaders.deviceId}</span>
+          <div className="space-y-1">
+            <h2 className="text-xl sm:text-2xl font-display font-medium text-pure-white">{user?.fullName}</h2>
+            <p className="text-xs text-fog-veil font-mono">
+              NIM: <span className="text-emerald-300 font-bold">{user?.nim_or_nip}</span> · Perangkat Terverifikasi:{' '}
+              <span className="text-pure-white">{authContextHeaders.deviceId}</span>
             </p>
           </div>
         </div>
 
-        {transcript && (
-          <div className="flex items-center gap-4 bg-slate-950 px-5 py-3 rounded-xl border border-slate-800">
-            <div>
-              <div className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Total SKS</div>
-              <div className="text-xl font-extrabold text-slate-200">{transcript.totalSks} SKS</div>
+        <div className="flex items-center gap-4">
+          {transcript && (
+            <div className="flex items-center gap-5 bg-midnight-canvas/80 px-6 py-3 rounded-card border border-glass-edge">
+              <div>
+                <div className="text-[10px] text-fog-veil uppercase tracking-wider font-mono">Total SKS</div>
+                <div className="text-lg font-bold text-pure-white">{transcript.totalSks} SKS</div>
+              </div>
+              <div className="w-px h-8 bg-glass-edge" />
+              <div>
+                <div className="text-[10px] text-fog-veil uppercase tracking-wider font-mono">IPK Kumulatif</div>
+                <div className="text-lg font-bold text-emerald-400">{transcript.ipk}</div>
+              </div>
             </div>
-            <div className="w-px h-8 bg-slate-800" />
-            <div>
-              <div className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">IPK Kumulatif</div>
-              <div className="text-xl font-extrabold text-emerald-400">{transcript.ipk}</div>
-            </div>
-          </div>
-        )}
+          )}
+
+          <button
+            onClick={loadData}
+            disabled={loading}
+            className="btn-ghost-pill p-2.5 text-xs cursor-pointer"
+            title="Muat ulang data"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Nilai Kelas Berjalan (Service Nilai) */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
-          <div className="p-4 border-b border-slate-800 font-bold text-sm text-slate-200 flex items-center gap-2">
-            <FileText className="w-4 h-4 text-indigo-400" />
+        <div className="glass-panel overflow-hidden">
+          <div className="p-4 sm:p-5 border-b border-glass-edge font-display font-medium text-sm text-pure-white flex items-center gap-2 bg-steel-plate/20">
+            <FileText className="w-4 h-4 text-frost-glow" />
             <span>Nilai Kelas Berjalan (GET /nilai)</span>
           </div>
 
           <div className="p-4 space-y-3">
             {grades.length === 0 ? (
-              <div className="text-xs text-slate-500 text-center py-6">Tidak ada data nilai kelas berjalan</div>
+              <div className="text-xs text-fog-veil text-center py-8">Tidak ada data nilai kelas berjalan</div>
             ) : (
               grades.map(g => (
-                <div key={g.id} className="bg-slate-950 p-4 rounded-lg border border-slate-800 flex justify-between items-center">
-                  <div>
-                    <div className="font-bold text-sm text-slate-200">{g.classes?.nama_mk}</div>
-                    <div className="text-xs text-slate-400 mt-1 font-mono">
-                      Tugas: {g.nilai_tugas} | UTS: {g.nilai_uts} | UAS: {g.nilai_uas}
+                <div key={g.id} className="p-4 rounded-card bg-midnight-canvas/70 border border-glass-edge flex justify-between items-center">
+                  <div className="space-y-1">
+                    <div className="font-medium text-sm text-pure-white">{g.classes?.nama_mk}</div>
+                    <div className="text-xs text-moon-mist font-mono">
+                      Tugas: {g.nilai_tugas} · UTS: {g.nilai_uts} · UAS: {g.nilai_uas}
                     </div>
-                    <div className="text-[10px] text-slate-500 mt-1">
+                    <div className="text-[11px] font-mono">
                       Status:{' '}
-                      <span className={g.classes?.is_finalized ? 'text-amber-400 font-bold' : 'text-emerald-400'}>
-                        {g.classes?.is_finalized ? 'Final (Tersinkron ke Transkrip)' : 'Draf Sementara'}
+                      <span className={g.classes?.is_finalized ? 'text-amber-400 font-semibold' : 'text-emerald-400'}>
+                        {g.classes?.is_finalized ? 'TERFINALISASI (Terkunci)' : 'BERJALAN (Draf)'}
                       </span>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-black text-indigo-400">{g.grade_letter}</div>
-                    <div className="text-xs text-slate-400 font-mono">Score: {g.nilai_akhir}</div>
+                    <div className="text-xl font-bold text-amber-300 font-mono">{g.nilai_akhir}</div>
+                    <span className="px-2.5 py-0.5 rounded-full bg-steel-plate/50 text-frost-glow text-xs font-bold font-mono border border-glass-edge">
+                      {g.grade_letter}
+                    </span>
                   </div>
                 </div>
               ))
@@ -113,33 +128,46 @@ export default function MhsPage() {
         </div>
 
         {/* Transkrip Akademik Resmi (Service Transkrip) */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
-          <div className="p-4 border-b border-slate-800 font-bold text-sm text-slate-200 flex items-center gap-2">
+        <div className="glass-panel overflow-hidden">
+          <div className="p-4 sm:p-5 border-b border-glass-edge font-display font-medium text-sm text-pure-white flex items-center gap-2 bg-steel-plate/20">
             <Award className="w-4 h-4 text-emerald-400" />
-            <span>Transkrip Resmi (GET /transkrip/:nim)</span>
+            <span>Transkrip Resmi (GET /transkrip/{user?.nim_or_nip})</span>
           </div>
 
           <div className="p-4 space-y-3">
-            {!transcript?.mataKuliah || transcript.mataKuliah.length === 0 ? (
-              <div className="text-xs text-slate-500 text-center py-6">
-                Belum ada mata kuliah yang difinalisasi oleh dosen ke transkrip.
+            {!transcript || !transcript.items || transcript.items.length === 0 ? (
+              <div className="text-xs text-fog-veil text-center py-8">
+                Belum ada nilai yang difinalisasi dan masuk transkrip resmi
               </div>
             ) : (
-              transcript.mataKuliah.map(m => (
-                <div key={m.id} className="bg-slate-950 p-4 rounded-lg border border-slate-800 flex justify-between items-center">
-                  <div>
-                    <span className="text-[10px] font-mono bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-bold">
-                      {m.kode_mk}
-                    </span>
-                    <div className="font-bold text-sm text-slate-200 mt-1">{m.nama_mk}</div>
-                    <div className="text-xs text-slate-400 font-mono mt-0.5">{m.sks} SKS</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-black text-emerald-400">{m.grade_letter}</div>
-                    <div className="text-[10px] text-slate-500">RESMI</div>
-                  </div>
-                </div>
-              ))
+              <div className="overflow-x-auto rounded-card border border-glass-edge">
+                <table className="w-full text-left text-xs font-mono">
+                  <thead>
+                    <tr className="bg-steel-plate/40 text-moon-mist border-b border-glass-edge uppercase text-[10px] tracking-wider">
+                      <th className="p-3">Kode MK</th>
+                      <th className="p-3 font-sans">Mata Kuliah</th>
+                      <th className="p-3">SKS</th>
+                      <th className="p-3">Nilai</th>
+                      <th className="p-3">Huruf</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-glass-edge bg-midnight-canvas/70">
+                    {transcript.items.map((it, idx) => (
+                      <tr key={idx} className="hover:bg-steel-plate/20 transition">
+                        <td className="p-3 text-frost-glow">{it.kode_mk}</td>
+                        <td className="p-3 text-pure-white font-sans font-medium">{it.nama_mk}</td>
+                        <td className="p-3 text-moon-mist">{it.sks}</td>
+                        <td className="p-3 font-bold text-amber-300">{it.nilai_akhir}</td>
+                        <td className="p-3">
+                          <span className="px-2 py-0.5 rounded-full bg-steel-plate/50 text-emerald-300 font-bold border border-glass-edge">
+                            {it.grade_letter}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </div>

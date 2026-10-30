@@ -2,9 +2,120 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-midnight-canvas: #05060f;
+  --color-steel-plate: #2f343e;
+  --color-fog-veil: #9da7ba;
+  --color-moon-mist: #c7d3ea;
+  --color-frost-glow: #d1e4fa;
+  --color-ice-highlight: #d8ecf8;
+  --color-pure-white: #ffffff;
+  --color-void-violet: #663af3;
+  --color-glass-edge: rgba(186, 215, 247, 0.12);
+  --color-frosted-glass: rgba(186, 214, 247, 0.03);
+  --color-deep-glass: rgba(5, 6, 15, 0.97);
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background-color: #0f172a;
-  color: #f8fafc;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #05060f;
+  color: #d1e4fa;
+  overflow-x: hidden;
+}
+
+/* Blueprint Grid Layer */
+.bg-blueprint-grid {
+  background-color: #05060f;
+  background-image: 
+    linear-gradient(rgba(186, 215, 247, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(186, 215, 247, 0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+/* Conic Spotlight Halo */
+.hero-spotlight {
+  background: conic-gradient(
+    from 180deg at 50% -10%,
+    transparent 45%,
+    rgba(124, 145, 182, 0.22) 49%,
+    rgba(124, 145, 182, 0.42) 50%,
+    rgba(124, 145, 182, 0.22) 51%,
+    transparent 55%
+  );
+}
+
+/* Frosted Glass Card / Panel */
+.glass-panel {
+  background: rgba(186, 214, 247, 0.03);
+  border: 1px solid rgba(186, 215, 247, 0.12);
+  border-radius: 16px;
+  box-shadow: 
+    inset 0 1px 1px rgba(216, 236, 248, 0.15),
+    inset 0 24px 48px rgba(168, 216, 245, 0.04),
+    0 16px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Deep Glass Modal / Surface */
+.glass-deep {
+  background: rgba(5, 6, 15, 0.96);
+  border: 1px solid rgba(186, 215, 247, 0.14);
+  border-radius: 16px;
+  box-shadow: 
+    inset 0 1px 1px rgba(216, 236, 248, 0.2),
+    inset 0 24px 48px rgba(168, 216, 245, 0.06),
+    0 24px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Skywash Gradient for Titles */
+.text-skywash {
+  background: linear-gradient(180deg, #d8ecf8 0%, #98c0ef 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Violet Primary CTA */
+.btn-violet {
+  background-color: #663af3;
+  color: #ffffff;
+  border-radius: 999px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 18px rgba(102, 58, 243, 0.35);
+}
+.btn-violet:hover:not(:disabled) {
+  background-color: #5527e0;
+  box-shadow: 0 0 26px rgba(102, 58, 243, 0.6);
+}
+.btn-violet:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Ghost Pill Action */
+.btn-ghost-pill {
+  background: rgba(186, 214, 247, 0.06);
+  border: 1px solid rgba(186, 215, 247, 0.12);
+  color: #d1e4fa;
+  border-radius: 999px;
+  transition: all 0.2s ease;
+}
+.btn-ghost-pill:hover {
+  background: rgba(186, 214, 247, 0.14);
+  color: #ffffff;
+  border-color: rgba(186, 215, 247, 0.24);
+}
+
+/* Inputs with frosted style */
+.input-frosted {
+  background: rgba(199, 211, 234, 0.06);
+  border: 1px solid rgba(186, 215, 247, 0.12);
+  border-radius: 6px;
+  color: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.input-frosted:focus {
+  outline: none;
+  border-color: rgba(186, 215, 247, 0.32);
+  box-shadow: 0 0 0 2px rgba(102, 58, 243, 0.2);
 }
