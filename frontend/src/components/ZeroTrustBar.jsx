@@ -37,9 +37,9 @@ export default function ZeroTrustBar() {
       {/* Simulator Controls */}
       <div className="flex items-center flex-wrap gap-3">
         {/* Device ID Selector */}
-        <div className="flex items-center gap-2 bg-steel-plate/30 px-3 py-1.5 rounded-full border border-glass-edge">
+        <div className="flex items-center gap-2 bg-steel-plate/60 px-3.5 py-1.5 rounded-full border border-glass-edge">
           <Laptop className="w-3.5 h-3.5 text-emerald-400" />
-          <span className="text-[11px] text-moon-mist font-medium">Header X-Device-ID:</span>
+          <span className="text-[11px] text-pure-white font-medium">Header X-Device-ID:</span>
           <select
             value={activeDeviceId}
             onChange={(e) => setDevice(e.target.value)}
@@ -60,9 +60,9 @@ export default function ZeroTrustBar() {
         </div>
 
         {/* Time Simulator */}
-        <div className="flex items-center gap-2 bg-steel-plate/30 px-3 py-1.5 rounded-full border border-glass-edge">
+        <div className="flex items-center gap-2 bg-steel-plate/60 px-3.5 py-1.5 rounded-full border border-glass-edge">
           <Clock className={`w-3.5 h-3.5 ${isWorkHour ? 'text-frost-glow' : 'text-amber-400'}`} />
-          <span className="text-[11px] text-moon-mist font-medium">Simulasi Jam:</span>
+          <span className="text-[11px] text-pure-white font-medium">Simulasi Jam:</span>
           <select
             value={simulatedHour}
             onChange={(e) => setSimulatedHour(e.target.value)}

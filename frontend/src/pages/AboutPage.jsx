@@ -45,37 +45,37 @@ export default function AboutPage({ onBack }) {
       {/* 3 Core Principles Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="glass-panel p-6 space-y-3 relative overflow-hidden group">
-          <div className="w-12 h-12 rounded-full bg-steel-plate/40 border border-glass-edge flex items-center justify-center text-frost-glow mb-4">
+          <div className="w-12 h-12 rounded-full bg-steel-plate/60 border border-glass-edge flex items-center justify-center text-frost-glow mb-4">
             <Lock className="w-5 h-5" />
           </div>
           <h2 className="text-lg font-display font-medium text-pure-white">
             Never Trust, Always Verify
           </h2>
-          <p className="text-xs sm:text-sm text-fog-veil leading-relaxed">
-            Tidak ada asumsi trust berdasarkan lokasi jaringan (perimeter). Setiap panggilan API wajib memverifikasi token identitas (JWT), keabsahan ID perangkat pengirim (<code className="text-emerald-300 font-mono">X-Device-ID</code>), serta parameter waktu secara berkelanjutan.
+          <p className="text-xs sm:text-sm text-moon-mist leading-relaxed">
+            Tidak ada asumsi trust berdasarkan lokasi jaringan (perimeter). Setiap panggilan API wajib memverifikasi token identitas (JWT), keabsahan ID perangkat pengirim (<code className="text-emerald-300 font-mono font-semibold">X-Device-ID</code>), serta parameter waktu secara berkelanjutan.
           </p>
         </div>
 
         <div className="glass-panel p-6 space-y-3 relative overflow-hidden group">
-          <div className="w-12 h-12 rounded-full bg-steel-plate/40 border border-glass-edge flex items-center justify-center text-frost-glow mb-4">
+          <div className="w-12 h-12 rounded-full bg-steel-plate/60 border border-glass-edge flex items-center justify-center text-frost-glow mb-4">
             <Users className="w-5 h-5" />
           </div>
           <h2 className="text-lg font-display font-medium text-pure-white">
             Least Privilege Principle
           </h2>
-          <p className="text-xs sm:text-sm text-fog-veil leading-relaxed">
+          <p className="text-xs sm:text-sm text-moon-mist leading-relaxed">
             Setiap subjek (Dosen, Mahasiswa, Admin) hanya diberikan hak akses minimum untuk menyelesaikan tugasnya. Dosen hanya melihat kelas ampuannya, mahasiswa hanya melihat transkrip miliknya, dan admin tidak dapat mengubah nilai langsung.
           </p>
         </div>
 
         <div className="glass-panel p-6 space-y-3 relative overflow-hidden group">
-          <div className="w-12 h-12 rounded-full bg-steel-plate/40 border border-glass-edge flex items-center justify-center text-frost-glow mb-4">
+          <div className="w-12 h-12 rounded-full bg-steel-plate/60 border border-glass-edge flex items-center justify-center text-frost-glow mb-4">
             <Server className="w-5 h-5" />
           </div>
           <h2 className="text-lg font-display font-medium text-pure-white">
             Assume Breach & Isolation
           </h2>
-          <p className="text-xs sm:text-sm text-fog-veil leading-relaxed">
+          <p className="text-xs sm:text-sm text-moon-mist leading-relaxed">
             Layanan microservices (Nilai & Transkrip) terisolasi sepenuhnya di belakang Express Gateway (PEP). Sinkronisasi data antar-service hanya diizinkan melalui saluran terautentikasi internal dengan gateway secret.
           </p>
         </div>
@@ -92,34 +92,34 @@ export default function AboutPage({ onBack }) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-          <div className="p-4 rounded-card bg-midnight-canvas/80 border border-glass-edge space-y-2">
+          <div className="p-4 rounded-card bg-midnight-canvas/90 border border-glass-edge space-y-2">
             <div className="font-mono text-emerald-400 font-semibold uppercase">PEP (Policy Enforcement Point)</div>
             <div className="font-bold text-pure-white text-sm">Express API Gateway</div>
-            <p className="text-fog-veil leading-relaxed">
+            <p className="text-moon-mist leading-relaxed">
               Titik gerbang tunggal (port 3000) yang mencegat seluruh request sebelum diteruskan ke service internal.
             </p>
           </div>
 
-          <div className="p-4 rounded-card bg-midnight-canvas/80 border border-glass-edge space-y-2">
+          <div className="p-4 rounded-card bg-midnight-canvas/90 border border-glass-edge space-y-2">
             <div className="font-mono text-indigo-400 font-semibold uppercase">PDP (Policy Decision Point)</div>
             <div className="font-bold text-pure-white text-sm">Policy Engine Middleware</div>
-            <p className="text-fog-veil leading-relaxed">
+            <p className="text-moon-mist leading-relaxed">
               Mesin penilai kebijakan yang mengevaluasi role, jam operasional, dan kepemilikan data sebelum menerbitkan keputusan ALLOW atau DENY.
             </p>
           </div>
 
-          <div className="p-4 rounded-card bg-midnight-canvas/80 border border-glass-edge space-y-2">
+          <div className="p-4 rounded-card bg-midnight-canvas/90 border border-glass-edge space-y-2">
             <div className="font-mono text-purple-400 font-semibold uppercase">Microservices</div>
             <div className="font-bold text-pure-white text-sm">Service Nilai & Transkrip</div>
-            <p className="text-fog-veil leading-relaxed">
+            <p className="text-moon-mist leading-relaxed">
               Dua service independen (port 3001 & 3002) yang hanya merespons request terverifikasi dari Gateway PEP.
             </p>
           </div>
 
-          <div className="p-4 rounded-card bg-midnight-canvas/80 border border-glass-edge space-y-2">
+          <div className="p-4 rounded-card bg-midnight-canvas/90 border border-glass-edge space-y-2">
             <div className="font-mono text-cyan-400 font-semibold uppercase">Audit Logging</div>
             <div className="font-bold text-pure-white text-sm">Realtime Security Logger</div>
-            <p className="text-fog-veil leading-relaxed">
+            <p className="text-moon-mist leading-relaxed">
               Mencatat seluruh percobaan akses (berhasil maupun ditolak) beserta atribut IP, Device ID, dan timestamp ke Supabase.
             </p>
           </div>

@@ -126,46 +126,46 @@ export default function LoginPage({ onNavigateAbout }) {
           )}
 
           <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block text-xs font-mono text-moon-mist uppercase tracking-wider mb-1.5">
-                Username
-              </label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                placeholder="misal: dosen_budi"
-                className="input-frosted w-full px-3.5 py-2.5 text-sm font-mono placeholder:text-fog-veil/50"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-mono text-moon-mist uppercase tracking-wider mb-1.5">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="••••••••••••"
-                className="input-frosted w-full px-3.5 py-2.5 text-sm font-mono placeholder:text-fog-veil/50"
-              />
-            </div>
-
-            <div className="p-3 rounded-card bg-midnight-canvas/70 border border-glass-edge text-xs space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="text-moon-mist flex items-center gap-1.5">
-                  <Laptop className="w-3.5 h-3.5 text-frost-glow" />
-                  Perangkat Terkirim:
-                </span>
-                <span className="font-mono text-emerald-400 font-semibold">{activeDeviceId}</span>
+              <div>
+                <label className="block text-xs font-mono text-pure-white font-semibold uppercase tracking-wider mb-1.5">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  placeholder="misal: dosen_budi"
+                  className="input-frosted w-full px-3.5 py-2.5 text-sm font-mono placeholder:text-fog-veil"
+                />
               </div>
-              <p className="text-[11px] text-fog-veil">
-                *Request menyertakan header <code className="text-frost-glow">X-Device-ID</code>. Jika tidak terdaftar untuk akun ini, Gateway akan memblokir request.
-              </p>
-            </div>
+
+              <div>
+                <label className="block text-xs font-mono text-pure-white font-semibold uppercase tracking-wider mb-1.5">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="••••••••••••"
+                  className="input-frosted w-full px-3.5 py-2.5 text-sm font-mono placeholder:text-fog-veil"
+                />
+              </div>
+
+              <div className="p-3.5 rounded-card bg-midnight-canvas/90 border border-glass-edge text-xs space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-pure-white font-medium flex items-center gap-1.5">
+                    <Laptop className="w-3.5 h-3.5 text-frost-glow" />
+                    Perangkat Terkirim:
+                  </span>
+                  <span className="font-mono text-emerald-300 font-bold">{activeDeviceId}</span>
+                </div>
+                <p className="text-[11px] text-moon-mist leading-relaxed">
+                  *Request menyertakan header <code className="text-pure-white font-mono bg-steel-plate/60 px-1 py-0.5 rounded">X-Device-ID</code>. Jika tidak terdaftar untuk akun ini, Gateway akan memblokir request.
+                </p>
+              </div>
 
             {/* Void Violet Submit CTA Button */}
             <button
@@ -226,8 +226,8 @@ export default function LoginPage({ onNavigateAbout }) {
                         {u.role}
                       </span>
                     </div>
-                    <div className="text-xs text-fog-veil font-mono">
-                      user: <span className="text-moon-mist">{u.username}</span> | device: <span className="text-emerald-400">{dev}</span>
+                    <div className="text-xs text-moon-mist font-mono">
+                      user: <span className="text-pure-white font-semibold">{u.username}</span> | device: <span className="text-emerald-300 font-semibold">{dev}</span>
                     </div>
                   </div>
                   <KeyRound className="w-4 h-4 text-fog-veil group-hover:text-frost-glow transition" />

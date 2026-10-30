@@ -65,15 +65,15 @@ export default function MhsPage() {
 
         <div className="flex items-center gap-4">
           {transcript && (
-            <div className="flex items-center gap-5 bg-midnight-canvas/80 px-6 py-3 rounded-card border border-glass-edge">
+            <div className="flex items-center gap-5 bg-midnight-canvas/90 px-6 py-3 rounded-card border border-glass-edge">
               <div>
-                <div className="text-[10px] text-fog-veil uppercase tracking-wider font-mono">Total SKS</div>
-                <div className="text-lg font-bold text-pure-white">{transcript.totalSks} SKS</div>
+                <div className="text-[10px] text-moon-mist uppercase tracking-wider font-mono font-semibold">Total SKS</div>
+                <div className="text-xl font-bold text-pure-white">{transcript.totalSks} SKS</div>
               </div>
               <div className="w-px h-8 bg-glass-edge" />
               <div>
-                <div className="text-[10px] text-fog-veil uppercase tracking-wider font-mono">IPK Kumulatif</div>
-                <div className="text-lg font-bold text-emerald-400">{transcript.ipk}</div>
+                <div className="text-[10px] text-moon-mist uppercase tracking-wider font-mono font-semibold">IPK Kumulatif</div>
+                <div className="text-xl font-bold text-emerald-400">{transcript.ipk}</div>
               </div>
             </div>
           )}
@@ -143,7 +143,7 @@ export default function MhsPage() {
               <div className="overflow-x-auto rounded-card border border-glass-edge">
                 <table className="w-full text-left text-xs font-mono">
                   <thead>
-                    <tr className="bg-steel-plate/40 text-moon-mist border-b border-glass-edge uppercase text-[10px] tracking-wider">
+                    <tr className="bg-steel-plate/50 text-pure-white border-b border-glass-edge uppercase text-[10px] tracking-wider font-semibold">
                       <th className="p-3">Kode MK</th>
                       <th className="p-3 font-sans">Mata Kuliah</th>
                       <th className="p-3">SKS</th>
@@ -154,12 +154,12 @@ export default function MhsPage() {
                   <tbody className="divide-y divide-glass-edge bg-midnight-canvas/70">
                     {transcript.items.map((it, idx) => (
                       <tr key={idx} className="hover:bg-steel-plate/20 transition">
-                        <td className="p-3 text-frost-glow">{it.kode_mk}</td>
+                        <td className="p-3 text-pure-white font-medium">{it.kode_mk}</td>
                         <td className="p-3 text-pure-white font-sans font-medium">{it.nama_mk}</td>
-                        <td className="p-3 text-moon-mist">{it.sks}</td>
+                        <td className="p-3 text-moon-mist font-semibold">{it.sks}</td>
                         <td className="p-3 font-bold text-amber-300">{it.nilai_akhir}</td>
                         <td className="p-3">
-                          <span className="px-2 py-0.5 rounded-full bg-steel-plate/50 text-emerald-300 font-bold border border-glass-edge">
+                          <span className="px-2.5 py-0.5 rounded-full bg-steel-plate/60 text-emerald-300 font-bold border border-glass-edge">
                             {it.grade_letter}
                           </span>
                         </td>

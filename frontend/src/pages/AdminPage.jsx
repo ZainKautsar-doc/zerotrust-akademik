@@ -63,7 +63,7 @@ export default function AdminPage() {
             placeholder="Masukkan NIM (cth: 2207001, 2207002, 2207003)"
             value={nimInput}
             onChange={(e) => setNimInput(e.target.value)}
-            className="input-frosted flex-1 px-3.5 py-2 text-sm font-mono placeholder:text-fog-veil/50"
+            className="input-frosted flex-1 px-3.5 py-2 text-sm font-mono placeholder:text-fog-veil"
           />
           <button
             type="submit"

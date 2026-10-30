@@ -177,7 +177,7 @@ export default function DosenPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
             <thead>
-              <tr className="bg-steel-plate/30 text-moon-mist border-b border-glass-edge uppercase text-[10px] tracking-wider">
+              <tr className="bg-steel-plate/50 text-pure-white border-b border-glass-edge uppercase text-[10px] tracking-wider font-semibold">
                 <th className="p-3">Mata Kuliah</th>
                 <th className="p-3">NIM</th>
                 <th className="p-3 font-sans">Nama Mahasiswa</th>
@@ -192,15 +192,15 @@ export default function DosenPage() {
             <tbody className="divide-y divide-glass-edge bg-midnight-canvas/70">
               {grades.map(g => (
                 <tr key={g.id} className="hover:bg-steel-plate/20 transition">
-                  <td className="p-3 text-frost-glow">{g.classes?.nama_mk}</td>
+                  <td className="p-3 text-pure-white font-medium">{g.classes?.nama_mk}</td>
                   <td className="p-3 text-emerald-300 font-bold">{g.users?.nim_or_nip}</td>
                   <td className="p-3 text-pure-white font-sans font-medium">{g.users?.full_name}</td>
-                  <td className="p-3 text-moon-mist">{g.nilai_tugas}</td>
-                  <td className="p-3 text-moon-mist">{g.nilai_uts}</td>
-                  <td className="p-3 text-moon-mist">{g.nilai_uas}</td>
+                  <td className="p-3 text-moon-mist font-semibold">{g.nilai_tugas}</td>
+                  <td className="p-3 text-moon-mist font-semibold">{g.nilai_uts}</td>
+                  <td className="p-3 text-moon-mist font-semibold">{g.nilai_uas}</td>
                   <td className="p-3 font-bold text-amber-300">{g.nilai_akhir}</td>
                   <td className="p-3">
-                    <span className="px-2 py-0.5 rounded-full bg-steel-plate/50 text-frost-glow font-bold border border-glass-edge">
+                    <span className="px-2.5 py-0.5 rounded-full bg-steel-plate/60 text-pure-white font-bold border border-glass-edge">
                       {g.grade_letter}
                     </span>
                   </td>
@@ -240,7 +240,7 @@ export default function DosenPage() {
 
             <form onSubmit={handleSaveGrade} className="space-y-4">
               <div>
-                <label className="block text-xs font-mono text-moon-mist uppercase mb-1">
+                <label className="block text-xs font-mono text-pure-white font-semibold uppercase mb-1">
                   Nilai Tugas (Bobot 30%)
                 </label>
                 <input
@@ -256,7 +256,7 @@ export default function DosenPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-moon-mist uppercase mb-1">
+                <label className="block text-xs font-mono text-pure-white font-semibold uppercase mb-1">
                   Nilai UTS (Bobot 30%)
                 </label>
                 <input
@@ -272,7 +272,7 @@ export default function DosenPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-moon-mist uppercase mb-1">
+                <label className="block text-xs font-mono text-pure-white font-semibold uppercase mb-1">
                   Nilai UAS (Bobot 40%)
                 </label>
                 <input

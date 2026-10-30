@@ -50,7 +50,7 @@ export default function AuditLogViewer() {
       <div className="overflow-x-auto max-h-80 overflow-y-auto font-mono text-xs rounded-card border border-glass-edge">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-steel-plate/40 text-moon-mist border-b border-glass-edge uppercase text-[10px] tracking-wider">
+            <tr className="bg-steel-plate/50 text-pure-white border-b border-glass-edge uppercase text-[10px] tracking-wider font-semibold">
               <th className="py-2.5 px-3">Waktu</th>
               <th className="py-2.5 px-3">Keputusan</th>
               <th className="py-2.5 px-3">Subjek</th>
@@ -72,26 +72,26 @@ export default function AuditLogViewer() {
                 const isAllow = log.decision === 'ALLOW';
                 return (
                   <tr key={log.id} className="hover:bg-steel-plate/20 transition">
-                    <td className="py-2 px-3 text-fog-veil whitespace-nowrap">
+                    <td className="py-2 px-3 text-moon-mist whitespace-nowrap">
                       {new Date(log.timestamp).toLocaleTimeString()}
                     </td>
                     <td className="py-2 px-3 whitespace-nowrap">
-                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
                         isAllow
-                          ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
-                          : 'bg-rose-500/10 text-rose-300 border-rose-500/30'
+                          ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'
+                          : 'bg-rose-500/15 text-rose-300 border-rose-500/40'
                       }`}>
                         {isAllow ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
                         {log.decision}
                       </span>
                     </td>
                     <td className="py-2 px-3 font-semibold text-pure-white">{log.subject}</td>
-                    <td className="py-2 px-3 text-moon-mist">{log.role || '-'}</td>
-                    <td className="py-2 px-3 text-frost-glow font-medium">
+                    <td className="py-2 px-3 text-moon-mist font-medium">{log.role || '-'}</td>
+                    <td className="py-2 px-3 text-ice-highlight font-semibold">
                       {log.method} {log.endpoint}
                     </td>
-                    <td className="py-2 px-3 text-amber-300/90">{log.device_id || '-'}</td>
-                    <td className="py-2 px-3 text-moon-mist max-w-xs truncate" title={log.reason}>
+                    <td className="py-2 px-3 text-amber-300 font-semibold">{log.device_id || '-'}</td>
+                    <td className="py-2 px-3 text-pure-white max-w-xs truncate" title={log.reason}>
                       {log.reason}
                     </td>
                   </tr>
