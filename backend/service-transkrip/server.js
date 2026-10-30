@@ -13,6 +13,57 @@ app.use(express.json());
 app.use(verifyGatewayAndToken);
 
 // -------------------------------------------------------------
+// GET /transkrip/all
+// Mengambil rekap seluruh mahasiswa beserta data transkrip untuk Admin
+// CATATAN: Wajib didefinisikan sebelum /transkrip/:nim agar kata 'all'
+// tidak tertangkap sebagai parameter :nim
+// -------------------------------------------------------------
+app.get('/transkrip/all', async (req, res) => {
+  try {
+    const { data: students, error: stuErr } = await supabase
+      .from('users')
+      .select('id, full_name, username, nim_or_nip')
+      .eq('role', 'mahasiswa')
+      .order('nim_or_nip', { ascending: true });
+
+    if (stuErr) return res.status(500).json({ error: stuErr.message });
+
+    const { data: transcripts, error: transErr } = await supabase
+      .from('transcripts')
+      .select('*');
+
+    if (transErr) return res.status(500).json({ error: transErr.message });
+
+    const gradePoints = { 'A': 4.0, 'B': 3.0, 'C': 2.0, 'D': 1.0, 'E': 0.0 };
+
+    const result = (students || []).map(st => {
+      const studentTranscripts = (transcripts || []).filter(t => t.mahasiswa_id === st.id);
+      let totalSks = 0;
+      let totalPoints = 0;
+
+      studentTranscripts.forEach(t => {
+        const point = gradePoints[t.grade_letter] ?? 0;
+        totalSks += t.sks;
+        totalPoints += point * t.sks;
+      });
+
+      const ipk = totalSks > 0 ? (totalPoints / totalSks).toFixed(2) : '0.00';
+
+      return {
+        ...st,
+        totalSks,
+        ipk,
+        transcripts: studentTranscripts
+      };
+    });
+
+    return res.json(result);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// -------------------------------------------------------------
 // GET /transkrip/:nim
 // Mengambil transkrip nilai akademik berdasarkan NIM
 // -------------------------------------------------------------

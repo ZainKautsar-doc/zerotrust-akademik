@@ -91,6 +91,28 @@ export default function DosenPage() {
     }
   };
 
+  const handleUnfinalisasi = async (classId, className) => {
+    if (!confirm(`Buka kunci kelas ${className}? Anda akan dapat mengedit nilai mahasiswa kembali.`)) {
+      return;
+    }
+
+    try {
+      const res = await apiRequest(
+        `/kelas/${classId}/unfinalisasi`,
+        { method: 'POST' },
+        authContextHeaders
+      );
+
+      setAlert({
+        type: 'success',
+        message: res.message || 'Kunci kelas berhasil dibuka kembali.'
+      });
+      loadData();
+    } catch (err) {
+      setAlert({ type: 'error', message: err.message });
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Alert Banner */}
@@ -154,15 +176,26 @@ export default function DosenPage() {
               </div>
             </div>
 
-            {!c.is_finalized && (
-              <button
-                onClick={() => handleFinalisasi(c.id, c.nama_mk)}
-                className="btn-violet text-xs px-4 py-2 flex items-center gap-1.5 cursor-pointer flex-shrink-0"
-              >
-                <Send className="w-3.5 h-3.5" />
-                <span>Finalisasi</span>
-              </button>
-            )}
+            <div className="flex items-center gap-2">
+              {!c.is_finalized ? (
+                <button
+                  onClick={() => handleFinalisasi(c.id, c.nama_mk)}
+                  className="btn-violet text-xs px-4 py-2 flex items-center gap-1.5 cursor-pointer flex-shrink-0"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Finalisasi</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleUnfinalisasi(c.id, c.nama_mk)}
+                  className="btn-ghost-pill text-xs px-3.5 py-1.5 flex items-center gap-1.5 cursor-pointer flex-shrink-0 border-amber-500/40 text-amber-300 hover:border-amber-500/70"
+                  title="Buka kunci untuk mengizinkan perubahan nilai"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>Buka Kunci Nilai</span>
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>

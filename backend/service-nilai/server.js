@@ -208,6 +208,35 @@ app.post('/kelas/:id/finalisasi', async (req, res) => {
   }
 });
 
+// -------------------------------------------------------------
+// POST /kelas/:id/unfinalisasi
+// Dosen membatalkan finalisasi (buka kunci) agar nilai bisa diedit kembali
+// -------------------------------------------------------------
+app.post('/kelas/:id/unfinalisasi', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const { data: classData, error: classErr } = await supabase
+      .from('classes')
+      .update({
+        is_finalized: false,
+        finalized_at: null
+      })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (classErr) return res.status(500).json({ error: classErr.message });
+
+    return res.json({
+      message: `Kunci kelas ${classData.nama_mk} berhasil dibuka. Dosen dapat mengedit nilai kembali.`,
+      classData
+    });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 app.listen(config.portNilai, () => {
   console.log(`[SERVICE NILAI] Running on port ${config.portNilai}`);
 });

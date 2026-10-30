@@ -24,6 +24,40 @@ export default function AuditLogViewer() {
     return () => clearInterval(interval);
   }, []);
 
+  const getActionBadge = (method, endpoint) => {
+    if (method === 'PUT' && endpoint.startsWith('/nilai')) {
+      return { label: 'EDIT NILAI', color: 'bg-amber-500/20 text-amber-300 border-amber-500/40' };
+    }
+    if (method === 'POST' && endpoint.includes('/finalisasi')) {
+      return { label: 'FINALISASI', color: 'bg-void-violet/30 text-frost-glow border-void-violet/50' };
+    }
+    if (method === 'POST' && endpoint.includes('/unfinalisasi')) {
+      return { label: 'BUKA KUNCI', color: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' };
+    }
+    if (method === 'POST' && endpoint === '/transkrip/sinkron') {
+      return { label: 'SINKRON SERVICE', color: 'bg-purple-500/20 text-purple-300 border-purple-500/40' };
+    }
+    if (method === 'POST' && endpoint.startsWith('/auth/login')) {
+      return { label: 'LOGIN AUTH', color: 'bg-blue-500/20 text-blue-300 border-blue-500/40' };
+    }
+    if (method === 'POST' && endpoint.startsWith('/auth/logout')) {
+      return { label: 'LOGOUT', color: 'bg-rose-500/20 text-rose-300 border-rose-500/40' };
+    }
+    if (method === 'GET' && endpoint.startsWith('/transkrip/all')) {
+      return { label: 'REKAP SEMUA MHS', color: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40' };
+    }
+    if (method === 'GET' && endpoint.startsWith('/transkrip')) {
+      return { label: 'BACA TRANSKRIP', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' };
+    }
+    if (method === 'GET' && endpoint.startsWith('/nilai')) {
+      return { label: 'BACA NILAI', color: 'bg-steel-plate/60 text-moon-mist border-glass-edge' };
+    }
+    if (method === 'GET' && endpoint.startsWith('/kelas')) {
+      return { label: 'BACA KELAS', color: 'bg-steel-plate/60 text-moon-mist border-glass-edge' };
+    }
+    return { label: method, color: 'bg-steel-plate/40 text-pure-white border-glass-edge' };
+  };
+
   return (
     <div className="glass-panel p-5 sm:p-6 space-y-4">
       <div className="flex items-center justify-between border-b border-glass-edge pb-3">
@@ -33,7 +67,7 @@ export default function AuditLogViewer() {
           </div>
           <div>
             <h3 className="font-display font-medium text-pure-white text-base">Live Gateway Audit Log</h3>
-            <p className="text-[11px] text-moon-mist">Rekaman evaluasi Policy Decision Point (PDP) secara real-time</p>
+            <p className="text-[11px] text-moon-mist">Rekaman evaluasi Policy Decision Point (PDP) dan Jejak Riwayat Akses/CRUD</p>
           </div>
         </div>
 
@@ -55,7 +89,7 @@ export default function AuditLogViewer() {
               <th className="py-2.5 px-3">Keputusan</th>
               <th className="py-2.5 px-3">Subjek</th>
               <th className="py-2.5 px-3">Role</th>
-              <th className="py-2.5 px-3">Method & Endpoint</th>
+              <th className="py-2.5 px-3">Aksi CRUD & Endpoint</th>
               <th className="py-2.5 px-3">Device ID</th>
               <th className="py-2.5 px-3">Evaluasi Policy Engine</th>
             </tr>
@@ -70,6 +104,7 @@ export default function AuditLogViewer() {
             ) : (
               logs.map((log) => {
                 const isAllow = log.decision === 'ALLOW';
+                const actionBadge = getActionBadge(log.method, log.endpoint);
                 return (
                   <tr key={log.id} className="hover:bg-steel-plate/20 transition">
                     <td className="py-2 px-3 text-moon-mist whitespace-nowrap">
@@ -87,8 +122,15 @@ export default function AuditLogViewer() {
                     </td>
                     <td className="py-2 px-3 font-semibold text-pure-white">{log.subject}</td>
                     <td className="py-2 px-3 text-moon-mist font-medium">{log.role || '-'}</td>
-                    <td className="py-2 px-3 text-ice-highlight font-semibold">
-                      {log.method} {log.endpoint}
+                    <td className="py-2 px-3">
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold font-sans border uppercase whitespace-nowrap ${actionBadge.color}`}>
+                          {actionBadge.label}
+                        </span>
+                        <span className="text-ice-highlight font-semibold">
+                          {log.method} {log.endpoint}
+                        </span>
+                      </div>
                     </td>
                     <td className="py-2 px-3 text-amber-300 font-semibold">{log.device_id || '-'}</td>
                     <td className="py-2 px-3 text-pure-white max-w-xs truncate" title={log.reason}>

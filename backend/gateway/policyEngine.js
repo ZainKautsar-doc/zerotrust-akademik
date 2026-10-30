@@ -341,6 +341,112 @@ export async function policyEngineMiddleware(req, res, next) {
     return next();
   }
 
+  // Endpoint: POST /kelas/:id/unfinalisasi
+  const unfinalMatch = path.match(/^\/kelas\/([a-zA-Z0-9-]+)\/unfinalisasi$/);
+  if (unfinalMatch && method === 'POST') {
+    const classId = unfinalMatch[1];
+
+    if (role !== 'dosen' && role !== 'admin') {
+      await logAudit({
+        subject: decoded.username,
+        role,
+        endpoint: path,
+        method,
+        deviceId,
+        decision: 'DENY',
+        reason: 'POST /kelas/:id/unfinalisasi only allowed for Dosen or Admin',
+        ipAddress: clientIp
+      });
+      return res.status(403).json({ error: 'Zero Trust Deny: Hanya dosen pengampu atau admin yang dapat membuka kunci kelas' });
+    }
+
+    // 1. Verifikasi Jam Akses
+    const withinHours = config.isWithinAccessHours(simulatedHour);
+    if (!withinHours && role !== 'admin') {
+      await logAudit({
+        subject: decoded.username,
+        role,
+        endpoint: path,
+        method,
+        deviceId,
+        decision: 'DENY',
+        reason: `Access Hour Policy Violation: Unfinalization attempted outside ${config.accessHourStart} - ${config.accessHourEnd}`,
+        ipAddress: clientIp
+      });
+      return res.status(403).json({
+        error: `Zero Trust Deny: Pembukaan kunci nilai hanya diizinkan pada jam operasional (${config.accessHourStart} - ${config.accessHourEnd})`
+      });
+    }
+
+    // 2. Verifikasi Pengampu jika Dosen
+    const { data: classData, error: classErr } = await supabase
+      .from('classes')
+      .select('*')
+      .eq('id', classId)
+      .single();
+
+    if (classErr || !classData) {
+      return res.status(404).json({ error: 'Kelas tidak ditemukan' });
+    }
+
+    if (role === 'dosen' && classData.dosen_id !== sub) {
+      await logAudit({
+        subject: decoded.username,
+        role,
+        endpoint: path,
+        method,
+        deviceId,
+        decision: 'DENY',
+        reason: `Ownership Violation: Dosen ${decoded.username} does not teach class ${classData.nama_mk}`,
+        ipAddress: clientIp
+      });
+      return res.status(403).json({ error: 'Zero Trust Deny: Anda bukan pengampu kelas ini' });
+    }
+
+    await logAudit({
+      subject: decoded.username,
+      role,
+      endpoint: path,
+      method,
+      deviceId,
+      decision: 'ALLOW',
+      reason: 'Authorized to unfinalize and unlock class for grade editing',
+      ipAddress: clientIp
+    });
+    req.user = decoded;
+    return next();
+  }
+
+  // Endpoint: GET /transkrip/all (Khusus Admin untuk rekap semua mahasiswa)
+  if (path === '/transkrip/all' && method === 'GET') {
+    if (role !== 'admin') {
+      await logAudit({
+        subject: decoded.username,
+        role,
+        endpoint: path,
+        method,
+        deviceId,
+        decision: 'DENY',
+        reason: 'GET /transkrip/all strictly requires Admin role',
+        ipAddress: clientIp
+      });
+      return res.status(403).json({ error: 'Zero Trust Deny: Hanya Admin yang dapat melihat seluruh rekap mahasiswa' });
+    }
+
+    await logAudit({
+      subject: decoded.username,
+      role,
+      endpoint: path,
+      method,
+      deviceId,
+      decision: 'ALLOW',
+      reason: 'Admin authorized to inspect all students transcripts',
+      ipAddress: clientIp
+    });
+    req.user = decoded;
+    return next();
+  }
+
   // Endpoint: GET /transkrip/:nim
   const transkripMatch = path.match(/^\/transkrip\/([a-zA-Z0-9_-]+)$/);
   if (transkripMatch && method === 'GET') {

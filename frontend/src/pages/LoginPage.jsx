@@ -192,13 +192,19 @@ export default function LoginPage({ onNavigateAbout }) {
               <UserCheck className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-display font-medium text-pure-white text-lg">Pilih Akun Preset Demo</h2>
-              <p className="text-xs text-moon-mist">Pilih akun untuk mengisi username dan ID perangkat secara instan</p>
+              <h2 className="font-display font-medium text-pure-white text-lg">Pilih Akun Demo</h2>
+              <p className="text-xs text-moon-mist">Pilih akun demo cepat untuk pengujian verifikasi Zero Trust</p>
             </div>
           </div>
 
           <div className="space-y-2.5 max-h-[360px] overflow-y-auto pr-2 custom-scrollbar">
-            {seedUsers.map((u) => {
+            {seedUsers
+              .filter(u => {
+                if (u.role === 'admin' || u.role === 'dosen') return true;
+                if (u.role === 'mahasiswa') return ['mhs_andi', 'mhs_bima'].includes(u.username);
+                return false;
+              })
+              .map((u) => {
               const dev = u.devices?.[0]?.device_id || 'NONE';
               const isSelected = username === u.username;
               return (
