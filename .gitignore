@@ -28,3 +28,7 @@ dist-ssr/
 # Exclude task internal planning guides
 PLAN.md
 SUPABASE_GUIDE.md
+
+# Local presentation and testing guides
+PANDUAN_PENGUJIAN_POSTMAN.md
+PRESENTASI_PROJEK.md
