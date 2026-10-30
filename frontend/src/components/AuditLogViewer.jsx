@@ -47,7 +47,7 @@ export default function AuditLogViewer() {
         </button>
       </div>
 
-      <div className="overflow-x-auto max-h-80 overflow-y-auto font-mono text-xs rounded-card border border-glass-edge">
+      <div className="overflow-x-auto max-h-80 overflow-y-auto font-mono text-xs rounded-card border border-glass-edge custom-scrollbar">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-steel-plate/50 text-pure-white border-b border-glass-edge uppercase text-[10px] tracking-wider font-semibold">

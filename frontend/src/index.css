@@ -119,3 +119,36 @@ body {
   border-color: rgba(186, 215, 247, 0.45);
   box-shadow: 0 0 0 2px rgba(102, 58, 243, 0.3);
 }
+
+/* Custom Scrollbar */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(186, 215, 247, 0.45) rgba(5, 6, 15, 0.85);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(5, 6, 15, 0.85);
+  border-radius: 999px;
+  border: 1px solid rgba(186, 215, 247, 0.1);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(186, 215, 247, 0.4) 0%, rgba(102, 58, 243, 0.6) 100%);
+  border-radius: 999px;
+  border: 1px solid rgba(216, 236, 248, 0.35);
+  box-shadow: 0 0 8px rgba(102, 58, 243, 0.35);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(216, 236, 248, 0.6) 0%, rgba(102, 58, 243, 0.85) 100%);
+  box-shadow: 0 0 12px rgba(102, 58, 243, 0.6);
+}
+
+.custom-scrollbar::-webkit-scrollbar-corner {
+  background: rgba(5, 6, 15, 0.95);
+}

@@ -197,7 +197,7 @@ export default function LoginPage({ onNavigateAbout }) {
             </div>
           </div>
 
-          <div className="space-y-2.5 max-h-[360px] overflow-y-auto pr-1">
+          <div className="space-y-2.5 max-h-[360px] overflow-y-auto pr-2 custom-scrollbar">
             {seedUsers.map((u) => {
               const dev = u.devices?.[0]?.device_id || 'NONE';
               const isSelected = username === u.username;
