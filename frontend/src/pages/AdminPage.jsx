@@ -76,22 +76,22 @@ export default function AdminPage() {
       )}
 
       {/* Rekap Seluruh Data Mahasiswa & Transkrip Otomatis */}
-      <div className="glass-panel p-6 sm:p-7 space-y-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-glass-edge pb-4">
+      <div className="glass-panel p-4 sm:p-7 space-y-4 sm:space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-glass-edge pb-4">
           <div className="flex items-center gap-2.5">
-            <Users className="w-5 h-5 text-emerald-400" />
+            <Users className="w-5 h-5 text-emerald-400 flex-shrink-0" />
             <div>
-              <h3 className="font-display font-medium text-base text-pure-white">
+              <h3 className="font-display font-medium text-sm sm:text-base text-pure-white">
                 Daftar Seluruh Mahasiswa & Transkrip
               </h3>
-              <p className="text-xs text-moon-mist">
-                Total: <span className="text-pure-white font-semibold">{allStudents.length} Mahasiswa Terdaftar</span> (Semua ditampilkan langsung)
+              <p className="text-[11px] sm:text-xs text-moon-mist">
+                Total: <span className="text-pure-white font-semibold">{allStudents.length} Mahasiswa</span>
               </p>
             </div>
           </div>
 
           {/* Live Search Filter */}
-          <div className="relative max-w-xs w-full">
+          <div className="relative w-full sm:max-w-xs">
             <Search className="w-3.5 h-3.5 text-fog-veil absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
@@ -103,8 +103,50 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Tabel Rekap Mahasiswa */}
-        <div className="overflow-x-auto rounded-card border border-glass-edge custom-scrollbar max-h-96 overflow-y-auto">
+        {/* Mobile View: Stacked Student Cards (sm:hidden) */}
+        <div className="block sm:hidden space-y-3">
+          {filteredStudents.length === 0 ? (
+            <div className="p-6 text-center text-xs text-fog-veil font-sans bg-midnight-canvas/60 rounded-card border border-glass-edge">
+              {loading ? 'Memuat rekap mahasiswa...' : 'Tidak ada data mahasiswa yang cocok.'}
+            </div>
+          ) : (
+            filteredStudents.map((st) => (
+              <div key={st.id} className="p-3.5 rounded-card bg-midnight-canvas/80 border border-glass-edge space-y-2.5">
+                <div className="flex justify-between items-start gap-2">
+                  <div>
+                    <div className="font-medium text-sm text-pure-white">{st.full_name}</div>
+                    <div className="text-xs font-mono text-emerald-300">NIM: {st.nim_or_nip}</div>
+                    <div className="text-[10px] font-mono text-moon-mist">username: {st.username}</div>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full font-bold border text-[11px] font-mono flex-shrink-0 ${
+                    parseFloat(st.ipk) >= 3.5 
+                      ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40' 
+                      : parseFloat(st.ipk) > 0
+                      ? 'bg-blue-500/15 text-blue-300 border-blue-500/40'
+                      : 'bg-steel-plate/40 text-fog-veil border-glass-edge'
+                  }`}>
+                    IPK: {st.ipk}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between text-xs pt-1 border-t border-glass-edge">
+                  <span className="text-moon-mist font-mono text-[11px]">
+                    {st.totalSks} SKS · {st.transcripts?.length || 0} MK
+                  </span>
+                  <button
+                    onClick={() => setSelectedStudent(st)}
+                    className="btn-ghost-pill px-3 py-1 text-xs font-sans cursor-pointer hover:border-void-violet"
+                  >
+                    Lihat Nilai
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Desktop View: Full Student Table (hidden sm:block) */}
+        <div className="hidden sm:block overflow-x-auto rounded-card border border-glass-edge custom-scrollbar max-h-96 overflow-y-auto">
           <table className="w-full text-left text-xs font-mono">
             <thead>
               <tr className="bg-steel-plate/50 text-pure-white border-b border-glass-edge uppercase text-[10px] tracking-wider font-semibold sticky top-0 backdrop-blur-md">
@@ -163,20 +205,20 @@ export default function AdminPage() {
 
       {/* Modal Detail Transkrip Mahasiswa */}
       {selectedStudent && (
-        <div className="fixed inset-0 bg-midnight-canvas/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
-          <div className="glass-deep max-w-lg w-full p-6 sm:p-7 space-y-4">
-            <div className="flex items-center justify-between border-b border-glass-edge pb-3">
-              <div>
-                <h3 className="font-display font-medium text-base text-pure-white">
+        <div className="fixed inset-0 bg-midnight-canvas/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 z-50">
+          <div className="glass-deep max-w-lg w-full p-5 sm:p-7 space-y-4 max-h-[92vh] overflow-y-auto custom-scrollbar">
+            <div className="flex items-center justify-between border-b border-glass-edge pb-3 gap-2">
+              <div className="min-w-0">
+                <h3 className="font-display font-medium text-sm sm:text-base text-pure-white truncate">
                   Transkrip: {selectedStudent.full_name}
                 </h3>
-                <p className="text-xs text-emerald-300 font-mono mt-0.5">
-                  NIM: {selectedStudent.nim_or_nip} · Username: {selectedStudent.username}
+                <p className="text-[11px] sm:text-xs text-emerald-300 font-mono mt-0.5 truncate">
+                  NIM: {selectedStudent.nim_or_nip} · User: {selectedStudent.username}
                 </p>
               </div>
-              <div className="text-right">
-                <div className="text-xs text-moon-mist">IPK: <span className="text-emerald-400 font-bold">{selectedStudent.ipk}</span></div>
-                <div className="text-xs text-moon-mist">SKS: <span className="text-pure-white font-bold">{selectedStudent.totalSks}</span></div>
+              <div className="text-right flex-shrink-0">
+                <div className="text-[11px] sm:text-xs text-moon-mist">IPK: <span className="text-emerald-400 font-bold">{selectedStudent.ipk}</span></div>
+                <div className="text-[11px] sm:text-xs text-moon-mist">SKS: <span className="text-pure-white font-bold">{selectedStudent.totalSks}</span></div>
               </div>
             </div>
 
@@ -187,12 +229,12 @@ export default function AdminPage() {
                 </div>
               ) : (
                 selectedStudent.transcripts.map((t, idx) => (
-                  <div key={idx} className="flex justify-between items-center text-xs p-2.5 rounded-card bg-midnight-canvas/90 border border-glass-edge">
-                    <div>
+                  <div key={idx} className="flex justify-between items-center text-xs p-2.5 rounded-card bg-midnight-canvas/90 border border-glass-edge gap-2">
+                    <div className="min-w-0">
                       <span className="font-mono text-emerald-300 font-semibold">{t.kode_mk}</span>
                       <span className="text-pure-white ml-2">{t.nama_mk} ({t.sks} SKS)</span>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full bg-steel-plate/60 text-amber-300 font-bold border border-glass-edge font-mono">
+                    <span className="px-2 py-0.5 rounded-full bg-steel-plate/60 text-amber-300 font-bold border border-glass-edge font-mono flex-shrink-0">
                       {t.grade_letter}
                     </span>
                   </div>
@@ -203,7 +245,7 @@ export default function AdminPage() {
             <div className="pt-2 text-right">
               <button
                 onClick={() => setSelectedStudent(null)}
-                className="btn-ghost-pill px-5 py-2 text-xs font-medium cursor-pointer"
+                className="btn-ghost-pill w-full sm:w-auto px-5 py-2 text-xs font-medium cursor-pointer"
               >
                 Tutup
               </button>

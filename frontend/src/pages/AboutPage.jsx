@@ -67,32 +67,32 @@ export default function AboutPage({ onBack }) {
         {/* Diagram Flow Container */}
         <div className="space-y-6">
           {/* Level 1: Client / Subject Layer */}
-          <div className="p-4 rounded-card bg-midnight-canvas/90 border border-glass-edge">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="p-3.5 sm:p-4 rounded-card bg-midnight-canvas/90 border border-glass-edge">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 sm:gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-steel-plate/60 flex items-center justify-center text-frost-glow flex-shrink-0">
-                  <Laptop className="w-5 h-5 text-pure-white" />
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-steel-plate/60 flex items-center justify-center text-frost-glow flex-shrink-0">
+                  <Laptop className="w-4 h-4 sm:w-5 sm:h-5 text-pure-white" />
                 </div>
                 <div>
-                  <div className="text-xs font-mono text-moon-mist uppercase">Untrusted Perimeter</div>
-                  <div className="text-sm font-bold text-pure-white">Subjek / Klien Pengakses</div>
-                  <div className="text-[11px] text-fog-veil">Dosen · Mahasiswa · Administrator</div>
+                  <div className="text-[10px] sm:text-xs font-mono text-moon-mist uppercase">Untrusted Perimeter</div>
+                  <div className="text-xs sm:text-sm font-bold text-pure-white">Subjek / Klien Pengakses</div>
+                  <div className="text-[10px] sm:text-[11px] text-fog-veil">Dosen · Mahasiswa · Administrator</div>
                 </div>
               </div>
 
               {/* Payload Context Badges */}
-              <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
-                <span className="px-2.5 py-1 rounded-full bg-steel-plate/40 text-frost-glow border border-glass-edge flex items-center gap-1.5">
-                  <Key className="w-3 h-3 text-amber-300" />
-                  Authorization: Bearer &lt;JWT&gt;
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-mono w-full md:w-auto">
+                <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-steel-plate/40 text-frost-glow border border-glass-edge flex items-center gap-1.5">
+                  <Key className="w-3 h-3 text-amber-300 flex-shrink-0" />
+                  <span className="truncate">Bearer &lt;JWT&gt;</span>
                 </span>
-                <span className="px-2.5 py-1 rounded-full bg-steel-plate/40 text-emerald-300 border border-glass-edge flex items-center gap-1.5">
-                  <Laptop className="w-3 h-3" />
-                  Header: X-Device-ID
+                <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-steel-plate/40 text-emerald-300 border border-glass-edge flex items-center gap-1.5">
+                  <Laptop className="w-3 h-3 flex-shrink-0" />
+                  <span>X-Device-ID</span>
                 </span>
-                <span className="px-2.5 py-1 rounded-full bg-steel-plate/40 text-indigo-300 border border-glass-edge flex items-center gap-1.5">
-                  <Clock className="w-3 h-3" />
-                  X-Simulated-Hour (07:00 - 21:00)
+                <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-steel-plate/40 text-indigo-300 border border-glass-edge flex items-center gap-1.5">
+                  <Clock className="w-3 h-3 flex-shrink-0" />
+                  <span>07:00 - 21:00</span>
                 </span>
               </div>
             </div>

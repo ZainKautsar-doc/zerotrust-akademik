@@ -57,16 +57,16 @@ export default function LoginPage({ onNavigateAbout }) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto py-6 sm:py-10 space-y-8">
+    <div className="max-w-5xl mx-auto py-3 sm:py-8 space-y-5 sm:space-y-8 px-1 sm:px-0">
       {/* AuthKit Section Eyebrow + Header Banner */}
-      <div className="glass-panel p-6 sm:p-8 space-y-6 relative overflow-hidden">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="glass-panel p-4 sm:p-8 space-y-4 sm:space-y-6 relative overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono tracking-wider text-moon-mist bg-steel-plate/30 border border-glass-edge">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              NIST SP 800-207 ZERO TRUST FRAMEWORK
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-mono tracking-wider text-moon-mist bg-steel-plate/30 border border-glass-edge">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+              <span>NIST SP 800-207 ZERO TRUST</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-display font-medium text-skywash tracking-tight">
+            <h1 className="text-xl sm:text-3xl font-display font-medium text-skywash tracking-tight">
               Sistem Informasi Akademik Zero Trust
             </h1>
             <p className="text-moon-mist text-xs sm:text-sm leading-relaxed">
@@ -76,7 +76,7 @@ export default function LoginPage({ onNavigateAbout }) {
 
           <button
             onClick={onNavigateAbout}
-            className="btn-ghost-pill flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-medium cursor-pointer self-start md:self-center"
+            className="btn-ghost-pill flex-shrink-0 inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-medium cursor-pointer w-full sm:w-auto"
           >
             <span>Pelajari Arsitektur Sistem</span>
             <ArrowRight className="w-4 h-4 text-frost-glow" />
@@ -84,7 +84,7 @@ export default function LoginPage({ onNavigateAbout }) {
         </div>
 
         {/* Feature Highlights Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-5 border-t border-glass-edge text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 pt-4 sm:pt-5 border-t border-glass-edge text-xs">
           <div className="flex items-start gap-2.5 text-moon-mist">
             <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
             <div>
@@ -106,15 +106,15 @@ export default function LoginPage({ onNavigateAbout }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
         {/* Form Login (AuthKit Auth Modal Card) */}
-        <div className="glass-deep p-6 sm:p-8 space-y-6">
+        <div className="glass-deep p-4 sm:p-8 space-y-5">
           <div className="flex items-center gap-3 pb-2 border-b border-glass-edge">
-            <div className="w-10 h-10 rounded-full bg-steel-plate/60 flex items-center justify-center text-frost-glow">
-              <Lock className="w-5 h-5 text-void-violet" />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-steel-plate/60 flex items-center justify-center text-frost-glow flex-shrink-0">
+              <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-void-violet" />
             </div>
             <div>
-              <h2 className="font-display font-medium text-pure-white text-lg">Autentikasi Gateway PEP</h2>
+              <h2 className="font-display font-medium text-pure-white text-base sm:text-lg">Autentikasi Gateway PEP</h2>
               <p className="text-xs text-moon-mist">Verifikasi kredensial dan validasi perangkat</p>
             </div>
           </div>
@@ -122,7 +122,7 @@ export default function LoginPage({ onNavigateAbout }) {
           {errorMsg && (
             <div className="bg-rose-950/60 border border-rose-500/40 text-rose-200 p-3.5 rounded-input text-xs flex items-start gap-2.5">
               <ShieldAlert className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
-              <span>{errorMsg}</span>
+              <span className="break-words">{errorMsg}</span>
             </div>
           )}
 
@@ -156,12 +156,12 @@ export default function LoginPage({ onNavigateAbout }) {
               </div>
 
               <div className="p-3.5 rounded-card bg-midnight-canvas/90 border border-glass-edge text-xs space-y-1.5">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-wrap gap-1">
                   <span className="text-pure-white font-medium flex items-center gap-1.5">
                     <Laptop className="w-3.5 h-3.5 text-frost-glow" />
                     Perangkat Terkirim:
                   </span>
-                  <span className="font-mono text-emerald-300 font-bold">{activeDeviceId}</span>
+                  <span className="font-mono text-emerald-300 font-bold break-all">{activeDeviceId}</span>
                 </div>
                 <p className="text-[11px] text-moon-mist leading-relaxed">
                   *Request menyertakan header <code className="text-pure-white font-mono bg-steel-plate/60 px-1 py-0.5 rounded">X-Device-ID</code>. Jika tidak terdaftar untuk akun ini, Gateway akan memblokir request.
@@ -178,8 +178,8 @@ export default function LoginPage({ onNavigateAbout }) {
                 <span>Memverifikasi Context PEP...</span>
               ) : (
                 <>
-                  <span>Autentikasi & Verifikasi Perangkat</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <span className="truncate">Autentikasi & Verifikasi Perangkat</span>
+                  <ArrowRight className="w-4 h-4 flex-shrink-0" />
                 </>
               )}
             </button>
@@ -187,18 +187,18 @@ export default function LoginPage({ onNavigateAbout }) {
         </div>
 
         {/* Quick User Selector (Preset Demo Cards) */}
-        <div className="glass-panel p-6 sm:p-8 space-y-4">
+        <div className="glass-panel p-4 sm:p-8 space-y-4">
           <div className="flex items-center gap-3 pb-2 border-b border-glass-edge">
-            <div className="w-10 h-10 rounded-full bg-steel-plate/60 flex items-center justify-center text-emerald-400">
-              <UserCheck className="w-5 h-5" />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-steel-plate/60 flex items-center justify-center text-emerald-400 flex-shrink-0">
+              <UserCheck className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div>
-              <h2 className="font-display font-medium text-pure-white text-lg">Pilih Akun Demo</h2>
+              <h2 className="font-display font-medium text-pure-white text-base sm:text-lg">Pilih Akun Demo</h2>
               <p className="text-xs text-moon-mist">Pilih akun demo cepat untuk pengujian verifikasi Zero Trust</p>
             </div>
           </div>
 
-          <div className="space-y-2.5 max-h-[360px] overflow-y-auto pr-2 custom-scrollbar">
+          <div className="space-y-2.5 max-h-[380px] sm:max-h-[360px] overflow-y-auto pr-1 sm:pr-2 custom-scrollbar">
             {seedUsers
               .filter(u => {
                 if (u.role === 'admin' || u.role === 'dosen') return true;
@@ -212,18 +212,18 @@ export default function LoginPage({ onNavigateAbout }) {
                 <button
                   key={u.id}
                   onClick={() => handleQuickSelect(u)}
-                  className={`w-full text-left p-3.5 rounded-card transition flex items-center justify-between group cursor-pointer border ${
+                  className={`w-full text-left p-3 sm:p-3.5 rounded-card transition flex items-center justify-between gap-2 group cursor-pointer border ${
                     isSelected
                       ? 'bg-steel-plate/50 border-void-violet shadow-sm'
                       : 'bg-midnight-canvas/60 hover:bg-steel-plate/30 border-glass-edge'
                   }`}
                 >
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm text-pure-white group-hover:text-ice-highlight">
+                  <div className="space-y-1 min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-medium text-sm text-pure-white group-hover:text-ice-highlight truncate">
                         {u.full_name}
                       </span>
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono uppercase font-semibold border ${
+                      <span className={`text-[10px] px-2 py-0.2 rounded-full font-mono uppercase font-semibold border ${
                         u.role === 'admin'
                           ? 'bg-purple-500/10 text-purple-300 border-purple-500/30'
                           : u.role === 'dosen'
@@ -233,11 +233,11 @@ export default function LoginPage({ onNavigateAbout }) {
                         {u.role}
                       </span>
                     </div>
-                    <div className="text-xs text-moon-mist font-mono">
+                    <div className="text-[11px] sm:text-xs text-moon-mist font-mono break-all leading-tight">
                       user: <span className="text-pure-white font-semibold">{u.username}</span> | device: <span className="text-emerald-300 font-semibold">{dev}</span>
                     </div>
                   </div>
-                  <KeyRound className="w-4 h-4 text-fog-veil group-hover:text-frost-glow transition" />
+                  <KeyRound className="w-4 h-4 text-fog-veil group-hover:text-frost-glow transition flex-shrink-0" />
                 </button>
               );
             })}

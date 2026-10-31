@@ -160,9 +160,9 @@ export default function DosenPage() {
       {/* Kelas yang Diampu (Glass Cards) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {classes.map(c => (
-          <div key={c.id} className="glass-panel p-5 flex items-center justify-between">
+          <div key={c.id} className="glass-panel p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="space-y-1.5">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-mono text-[11px] bg-steel-plate/50 text-frost-glow px-2.5 py-0.5 rounded-full border border-glass-edge font-semibold">
                   {c.kode_mk}
                 </span>
@@ -176,7 +176,7 @@ export default function DosenPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 self-end sm:self-center">
               {!c.is_finalized ? (
                 <button
                   onClick={() => handleFinalisasi(c.id, c.nama_mk)}
@@ -200,14 +200,74 @@ export default function DosenPage() {
         ))}
       </div>
 
-      {/* Daftar Nilai Mahasiswa Table */}
+      {/* Daftar Nilai Mahasiswa Table & Mobile Cards */}
       <div className="glass-panel overflow-hidden">
         <div className="p-4 sm:p-5 border-b border-glass-edge flex justify-between items-center bg-steel-plate/20">
           <span className="font-display font-medium text-sm text-pure-white">Daftar Nilai Mahasiswa</span>
           <span className="text-xs font-mono text-moon-mist">Total: {grades.length} Peserta</span>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Mobile View: Stacked Cards (sm:hidden) */}
+        <div className="block sm:hidden divide-y divide-glass-edge">
+          {grades.length === 0 ? (
+            <div className="p-6 text-center text-xs text-fog-veil font-sans">
+              Tidak ada data nilai mahasiswa.
+            </div>
+          ) : (
+            grades.map(g => (
+              <div key={g.id} className="p-4 bg-midnight-canvas/70 space-y-3">
+                <div className="flex justify-between items-start gap-2">
+                  <div>
+                    <div className="font-medium text-sm text-pure-white">{g.users?.full_name}</div>
+                    <div className="text-xs font-mono text-emerald-300">NIM: {g.users?.nim_or_nip}</div>
+                    <div className="text-[11px] text-moon-mist">{g.classes?.nama_mk}</div>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <div className="text-lg font-bold text-amber-300 font-mono">{g.nilai_akhir}</div>
+                    <span className="inline-block px-2 py-0.5 rounded-full bg-steel-plate/60 text-pure-white text-[10px] font-bold font-mono border border-glass-edge">
+                      Grade: {g.grade_letter}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Score Pills */}
+                <div className="grid grid-cols-3 gap-2 text-center text-[11px] font-mono bg-steel-plate/30 p-2 rounded-lg border border-glass-edge">
+                  <div>
+                    <div className="text-[9px] text-moon-mist uppercase">Tugas (30%)</div>
+                    <div className="font-semibold text-pure-white">{g.nilai_tugas}</div>
+                  </div>
+                  <div>
+                    <div className="text-[9px] text-moon-mist uppercase">UTS (30%)</div>
+                    <div className="font-semibold text-pure-white">{g.nilai_uts}</div>
+                  </div>
+                  <div>
+                    <div className="text-[9px] text-moon-mist uppercase">UAS (40%)</div>
+                    <div className="font-semibold text-pure-white">{g.nilai_uas}</div>
+                  </div>
+                </div>
+
+                {/* Mobile Action Button */}
+                <div className="pt-1 flex justify-end">
+                  <button
+                    onClick={() => handleEditClick(g)}
+                    disabled={g.classes?.is_finalized}
+                    className={`w-full py-2 rounded-full text-xs transition font-sans flex items-center justify-center gap-1.5 cursor-pointer ${
+                      g.classes?.is_finalized
+                        ? 'bg-steel-plate/20 text-fog-veil cursor-not-allowed border border-transparent'
+                        : 'btn-ghost-pill'
+                    }`}
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span>{g.classes?.is_finalized ? 'Nilai Terkunci (Final)' : 'Edit Nilai'}</span>
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Desktop View: Full Data Table (hidden sm:block) */}
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
             <thead>
               <tr className="bg-steel-plate/50 text-pure-white border-b border-glass-edge uppercase text-[10px] tracking-wider font-semibold">
@@ -260,13 +320,13 @@ export default function DosenPage() {
 
       {/* Deep Glass Edit Modal */}
       {editingGrade && (
-        <div className="fixed inset-0 bg-midnight-canvas/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
-          <div className="glass-deep max-w-md w-full p-6 sm:p-7 space-y-5">
+        <div className="fixed inset-0 bg-midnight-canvas/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 z-50">
+          <div className="glass-deep max-w-md w-full p-5 sm:p-7 space-y-4 sm:space-y-5 max-h-[92vh] overflow-y-auto custom-scrollbar">
             <div>
-              <h3 className="font-display font-medium text-base text-pure-white">
+              <h3 className="font-display font-medium text-base text-pure-white truncate">
                 Edit Nilai: {editingGrade.users?.full_name}
               </h3>
-              <p className="text-xs text-moon-mist font-mono mt-1">
+              <p className="text-xs text-moon-mist font-mono mt-1 break-words">
                 NIM: {editingGrade.users?.nim_or_nip} · Kelas: {editingGrade.classes?.nama_mk}
               </p>
             </div>

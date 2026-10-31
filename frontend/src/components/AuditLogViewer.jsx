@@ -60,29 +60,85 @@ export default function AuditLogViewer() {
   };
 
   return (
-    <div className="glass-panel p-5 sm:p-6 space-y-4">
-      <div className="flex items-center justify-between border-b border-glass-edge pb-3">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-steel-plate/60 flex items-center justify-center text-frost-glow">
-            <ShieldAlert className="w-4 h-4 text-frost-glow" />
+    <div className="glass-panel p-4 sm:p-6 space-y-4">
+      <div className="flex items-center justify-between border-b border-glass-edge pb-3 gap-2">
+        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-steel-plate/60 flex items-center justify-center text-frost-glow flex-shrink-0">
+            <ShieldAlert className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-frost-glow" />
           </div>
-          <div>
-            <h3 className="font-display font-medium text-pure-white text-base">Live Gateway Audit Log</h3>
-            <p className="text-[11px] text-moon-mist">Rekaman evaluasi Policy Decision Point (PDP) dan Jejak Riwayat Akses/CRUD</p>
+          <div className="min-w-0">
+            <h3 className="font-display font-medium text-pure-white text-sm sm:text-base truncate">Live Gateway Audit Log</h3>
+            <p className="text-[10px] sm:text-[11px] text-moon-mist truncate">Evaluasi PDP & Jejak Riwayat Akses Zero Trust</p>
           </div>
         </div>
 
         <button
           onClick={fetchLogs}
           disabled={loading}
-          className="btn-ghost-pill flex items-center gap-1.5 text-xs px-3 py-1.5 cursor-pointer"
+          className="btn-ghost-pill flex items-center gap-1.5 text-xs px-2.5 sm:px-3 py-1.5 cursor-pointer flex-shrink-0"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-          <span>Refresh</span>
+          <span className="hidden sm:inline">Refresh</span>
         </button>
       </div>
 
-      <div className="overflow-x-auto max-h-80 overflow-y-auto font-mono text-xs rounded-card border border-glass-edge custom-scrollbar">
+      {/* Mobile Card View for Audit Logs (sm:hidden) */}
+      <div className="block sm:hidden space-y-2.5 max-h-80 overflow-y-auto custom-scrollbar">
+        {logs.length === 0 ? (
+          <div className="py-6 text-center text-fog-veil font-sans text-xs">
+            Belum ada log evaluasi keamanan yang tercatat
+          </div>
+        ) : (
+          logs.map((log) => {
+            const isAllow = log.decision === 'ALLOW';
+            const actionBadge = getActionBadge(log.method, log.endpoint);
+            return (
+              <div key={log.id} className="p-3 rounded-card bg-midnight-canvas/80 border border-glass-edge space-y-2 text-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                      isAllow
+                        ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'
+                        : 'bg-rose-500/15 text-rose-300 border-rose-500/40'
+                    }`}>
+                      {isAllow ? <CheckCircle className="w-2.5 h-2.5" /> : <XCircle className="w-2.5 h-2.5" />}
+                      {log.decision}
+                    </span>
+                    <span className="text-[10px] font-mono text-moon-mist">
+                      {new Date(log.timestamp).toLocaleTimeString()}
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-mono text-amber-300 font-semibold truncate max-w-[120px]">
+                    {log.device_id || '-'}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 flex-wrap font-mono">
+                  <span className={`px-2 py-0.5 rounded text-[9px] font-bold font-sans border uppercase whitespace-nowrap ${actionBadge.color}`}>
+                    {actionBadge.label}
+                  </span>
+                  <span className="text-pure-white font-semibold text-[11px] truncate">
+                    {log.method} {log.endpoint}
+                  </span>
+                </div>
+
+                <div className="text-[11px] text-moon-mist flex items-center justify-between pt-1 border-t border-glass-edge">
+                  <span>Subjek: <strong className="text-pure-white">{log.subject}</strong> ({log.role || '-'})</span>
+                </div>
+
+                {log.reason && (
+                  <div className="text-[10px] text-fog-veil bg-steel-plate/30 p-1.5 rounded font-mono break-words">
+                    {log.reason}
+                  </div>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop Table View (hidden sm:block) */}
+      <div className="hidden sm:block overflow-x-auto max-h-80 overflow-y-auto font-mono text-xs rounded-card border border-glass-edge custom-scrollbar">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-steel-plate/50 text-pure-white border-b border-glass-edge uppercase text-[10px] tracking-wider font-semibold">
