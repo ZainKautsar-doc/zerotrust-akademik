@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { GATEWAY_URL } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -35,7 +36,7 @@ export function AuthProvider({ children }) {
   const logoutUser = async () => {
     if (refreshToken) {
       try {
-        await fetch('http://127.0.0.1:3000/auth/logout', {
+        await fetch(`${GATEWAY_URL}/auth/logout`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ refreshToken })

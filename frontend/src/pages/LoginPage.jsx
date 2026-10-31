@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { GATEWAY_URL } from '../services/api';
 import { Lock, UserCheck, ShieldAlert, KeyRound, ArrowRight, ShieldCheck, CheckCircle2, Laptop } from 'lucide-react';
 
 export default function LoginPage({ onNavigateAbout }) {
@@ -11,7 +12,7 @@ export default function LoginPage({ onNavigateAbout }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:3000/api/users/seed-accounts')
+    fetch(`${GATEWAY_URL}/api/users/seed-accounts`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setSeedUsers(data);
@@ -33,7 +34,7 @@ export default function LoginPage({ onNavigateAbout }) {
     setLoading(true);
 
     try {
-      const res = await fetch('http://127.0.0.1:3000/auth/login', {
+      const res = await fetch(`${GATEWAY_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,4 +1,6 @@
-const GATEWAY_URL = 'http://127.0.0.1:3000';
+export const GATEWAY_URL = import.meta.env.VITE_API_GATEWAY_URL !== undefined 
+  ? import.meta.env.VITE_API_GATEWAY_URL 
+  : (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' ? '' : 'http://127.0.0.1:3000');
 
 export async function apiRequest(endpoint, options = {}, authContext = {}) {
   const { token, deviceId, simulatedHour } = authContext;

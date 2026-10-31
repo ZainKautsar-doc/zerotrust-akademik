@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshCw, CheckCircle, XCircle, ShieldAlert } from 'lucide-react';
+import { GATEWAY_URL } from '../services/api';
 
 export default function AuditLogViewer() {
   const [logs, setLogs] = useState([]);
@@ -8,7 +9,7 @@ export default function AuditLogViewer() {
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:3000/api/audit-logs');
+      const res = await fetch(`${GATEWAY_URL}/api/audit-logs`);
       const data = await res.json();
       if (Array.isArray(data)) setLogs(data);
     } catch (err) {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { GATEWAY_URL } from '../services/api';
 import { ShieldCheck, Laptop, Clock } from 'lucide-react';
 
 export default function ZeroTrustBar() {
@@ -7,7 +8,7 @@ export default function ZeroTrustBar() {
   const [deviceList, setDeviceList] = useState([]);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:3000/api/devices/all')
+    fetch(`${GATEWAY_URL}/api/devices/all`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setDeviceList(data);
