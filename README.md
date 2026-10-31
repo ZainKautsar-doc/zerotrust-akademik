@@ -1,19 +1,45 @@
 # SIAKAD ZERO TRUST — NIST SP 800-207
 > Sistem Informasi Pengelolaan Nilai & Transkrip Akademik Berbasis Arsitektur Keamanan Zero Trust
 
-Aplikasi demonstrasi implementasi standar keamanan **Zero Trust Architecture (NIST SP 800-207)** pada sistem akademik pengelolaan nilai dan transkrip mahasiswa. Dilengkapi dengan **API Gateway (PEP & PE/PA)**, backend microservices terisolasi, database bersama berbasis **Supabase (PostgreSQL)**, dan antarmuka interaktif **React (Vite + Tailwind CSS)** bertema *Frosted Glass Cathedral at Midnight* (AuthKit Design System) dengan simulator konteks perangkat (`X-Device-ID`) dan jam kerja operasional secara live.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-zerotrust--siakad.vercel.app-663af3?style=for-the-badge&logo=vercel&logoColor=white)](https://zerotrust-siakad.vercel.app)
+[![Security Standard](https://img.shields.io/badge/Security%20Standard-NIST%20SP%20800--207-blue?style=for-the-badge)](https://csrc.nist.gov/publications/detail/sp/800-207/final)
+[![Database](https://img.shields.io/badge/Database-Supabase%20PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
+
+🔗 **URL Publik (Live Production):** [https://zerotrust-siakad.vercel.app](https://zerotrust-siakad.vercel.app)
 
 ---
 
-## 1. Arsitektur Sistem (NIST SP 800-207)
+## 👤 Identitas Pengembang
+- **Nama** : Zain Kautsar Ridha
+- **NPM** : 247006111153
+- **Kelas** : F
+- **Mata Kuliah** : Keamanan Informasi (KP70065004)
+- **Program Studi** : Informatika, Fakultas Teknik, Universitas Siliwangi
+
+---
+
+## 1. Ringkasan Projek
+
+Aplikasi demonstrasi implementasi standar internasional **Zero Trust Architecture (NIST SP 800-207)** pada sistem akademik pengelolaan nilai dan transkrip mahasiswa. 
+
+Berbeda dengan keamanan perimeter konvensional yang mempercayai siapa pun di dalam jaringan kampus, sistem ini beroperasi dengan prinsip utama: **"Never Trust, Always Verify"**—setiap request wajib diverifikasi token identitasnya (JWT), keabsahan ID perangkat pengirim (`X-Device-ID`), serta dibatasi jam kerja operasional (07:00 – 21:00 WIB).
+
+Projek ini telah **berhasil di-deploy penuh secara live** sebagai *Full Vercel Monorepo Serverless*:
+- **Frontend:** React (Vite + Tailwind CSS) dengan tema estetika *Frosted Glass Cathedral at Midnight* (AuthKit Design System) dan Simulator HUD Zero Trust.
+- **Backend API Gateway (PEP/PDP):** Berjalan di Vercel Serverless Function (`api/index.js`).
+- **Database:** Supabase Cloud (PostgreSQL) terenkripsi untuk manajemen akun, whitelist perangkat, nilai, transkrip, dan live audit log.
+
+---
+
+## 2. Arsitektur Sistem (NIST SP 800-207)
 
 ```text
-               [ Browser / Klien Frontend (Port 5173) ]
+               [ Browser / Klien Frontend (Vercel CDN) ]
                                     │
                                     │ HTTP (Authorization: Bearer <JWT>, Header: X-Device-ID)
                                     ▼
 ┌────────────────────────────────────────────────────────────────────────┐
-│                   API GATEWAY (Port 3000)                              │
+│                   API GATEWAY (Vercel Serverless / Port 3000)          │
 │                                                                        │
 │   ┌───────────────────────────┐      ┌─────────────────────────────┐   │
 │   │ PEP (Policy Enforcement)  │ ───► │ PDP / PE (Policy Engine)    │   │
@@ -31,7 +57,7 @@ Aplikasi demonstrasi implementasi standar keamanan **Zero Trust Architecture (NI
     (X-Gateway-Secret, Token User)     (X-Gateway-Secret, Token Service)
                    ▼                                  ▼
    ┌──────────────────────────────┐   ┌──────────────────────────────┐
-   │ Service Nilai (Port 3001)    │   │ Service Transkrip (Port 3002)│
+   │ Service Nilai                │   │ Service Transkrip            │
    │ • Kelola Nilai & Kelas       │   │ • Transkrip Resmi Mahasiswa  │
    │ • Finalisasi & Unfinalisasi  │   │ • Rekap Semua Mahasiswa      │
    │ • Pemicu Token Antar-Layanan │   │ • Sinkronisasi Antar-Layanan │
@@ -50,11 +76,11 @@ Aplikasi demonstrasi implementasi standar keamanan **Zero Trust Architecture (NI
 
 ---
 
-## 2. Fitur Keamanan Zero Trust Utama
+## 3. Fitur Keamanan Zero Trust Utama
 
 1. **Never Trust, Always Verify:**
-   - Seluruh request wajib melalui API Gateway (Port 3000).
-   - Akses langsung ke Service Nilai (3001) atau Service Transkrip (3002) tanpa melewati Gateway ditolak dengan error `403 Forbidden` (`X-Gateway-Secret missing`).
+   - Seluruh request wajib melalui API Gateway.
+   - Akses langsung ke microservice privat tanpa melewati Gateway ditolak dengan error `403 Forbidden` (`X-Gateway-Secret missing`).
 2. **Context Verification — Perangkat Terdaftar (*Device Context*):**
    - Klien wajib menyertakan header `X-Device-ID`.
    - Gateway mencocokkan ID perangkat dengan whitelist di database. Perangkat ilegal (contoh: `DEV-HACKER-UNREGISTERED`) langsung diblokir (`403 Forbidden: Device Untrusted`).
@@ -74,7 +100,7 @@ Aplikasi demonstrasi implementasi standar keamanan **Zero Trust Architecture (NI
 
 ---
 
-## 3. Daftar Akun & Device ID Awal
+## 4. Daftar Akun & Device ID Awal
 
 Seluruh akun memiliki password default: **`password123`**
 
@@ -108,27 +134,35 @@ Tersedia 10 mahasiswa di database yang nilainya dapat dikelola di portal Dosen d
 
 ---
 
-## 4. Cara Menjalankan Aplikasi
+## 5. Cara Menjalankan Aplikasi
 
-### Prasyarat
+### Akses Langsung (Live Online)
+Buka langsung melalui browser tanpa instalasi apa pun:  
+👉 **[https://zerotrust-siakad.vercel.app](https://zerotrust-siakad.vercel.app)**
+
+---
+
+### Cara Menjalankan Secara Lokal (Opsional)
+
+#### Prasyarat
 - **Node.js** (v18 atau lebih baru)
 - Koneksi internet aktif (untuk koneksi ke Supabase Database)
 
-### Langkah 1: Jalankan Seluruh Backend Services
-Buka terminal baru di folder `backend/`:
+#### Langkah 1: Jalankan Backend Services
+Buka terminal di folder `backend/`:
 ```powershell
 cd backend
 npm install
 node startAll.js
 ```
-*Script `startAll.js` akan menjalankan 3 service sekaligus:*
+*Script `startAll.js` akan menjalankan 3 service:*
 - **API Gateway (PEP/PDP):** `http://127.0.0.1:3000`
 - **Service Nilai:** `http://127.0.0.1:3001`
 - **Service Transkrip:** `http://127.0.0.1:3002`
 
-*(Alternatif di Windows: cukup jalankan file `backend/run-backend.bat`).*
+*(Alternatif di Windows: jalankan file `backend/run-backend.bat`).*
 
-### Langkah 2: Jalankan Frontend Web
+#### Langkah 2: Jalankan Frontend Web
 Buka terminal kedua di folder `frontend/`:
 ```powershell
 cd frontend
@@ -137,11 +171,11 @@ npm run dev
 ```
 Buka browser pada alamat: **`http://localhost:5173`**
 
-*(Alternatif di Windows: cukup jalankan file `frontend/run-frontend.bat`).*
+*(Alternatif di Windows: jalankan file `frontend/run-frontend.bat`).*
 
 ---
 
-## 5. Ringkasan Endpoint API
+## 6. Ringkasan Endpoint API
 
 | Layanan | Method | Endpoint | Hak Akses (Role) | Keterangan |
 |---|---|---|---|---|
