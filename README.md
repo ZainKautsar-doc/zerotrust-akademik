@@ -1,153 +1,161 @@
-# Sistem Nilai Akademik - Zero Trust Security (NIST SP 800-207)
+# SIAKAD ZERO TRUST — NIST SP 800-207
+> Sistem Informasi Pengelolaan Nilai & Transkrip Akademik Berbasis Arsitektur Keamanan Zero Trust
 
-Aplikasi demonstrasi penerapan prinsip **Zero Trust Architecture (NIST SP 800-207)** pada Sistem Akademik Pengelolaan Nilai & Transkrip Mahasiswa. Dilengkapi dengan **API Gateway (PEP & PE/PA)**, backend microservices, database bersama menggunakan **Supabase (PostgreSQL)**, dan frontend interaktif **React (Vite + Tailwind CSS)** dengan simulasi pengujian konteks perangkat dan jam akses secara langsung.
+Aplikasi demonstrasi implementasi standar keamanan **Zero Trust Architecture (NIST SP 800-207)** pada sistem akademik pengelolaan nilai dan transkrip mahasiswa. Dilengkapi dengan **API Gateway (PEP & PE/PA)**, backend microservices terisolasi, database bersama berbasis **Supabase (PostgreSQL)**, dan antarmuka interaktif **React (Vite + Tailwind CSS)** bertema *Frosted Glass Cathedral at Midnight* (AuthKit Design System) dengan simulator konteks perangkat (`X-Device-ID`) dan jam kerja operasional secara live.
 
 ---
 
-## 1. Arsitektur Sistem
+## 1. Arsitektur Sistem (NIST SP 800-207)
 
 ```text
-                  ┌───────────────────────────────┐
-                  │       Frontend (React)        │
-                  │         (Port 5173)           │
-                  └───────────────┬───────────────┘
-                                  │
-                                  │ HTTP (Authorization: Bearer <token>, X-Device-ID)
-                                  ▼
+               [ Browser / Klien Frontend (Port 5173) ]
+                                    │
+                                    │ HTTP (Authorization: Bearer <JWT>, Header: X-Device-ID)
+                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
-│ API Gateway (Port 3000)                                                │
-│ ├── Policy Enforcement Point (PEP)                                     │
-│ ├── Policy Engine & Policy Administrator (PE/PA)                       │
-│ ├── Auth Controller (/auth/login, /auth/refresh, /auth/service)        │
-│ └── Live Audit Logger (Persistensi ke tabel audit_logs)                │
-└──────────────────┬─────────────────────────────────┬───────────────────┘
-                   │                                 │
-                   │ (X-Gateway-Secret, Token)       │ (X-Gateway-Secret, Service Token)
-                   ▼                                 ▼
-┌───────────────────────────────────┐    ┌──────────────────────────────────┐
-│ Service Nilai (Port 3001)         │    │ Service Transkrip (Port 3002)    │
-│ • Validasi Gateway Secret & JWT   │    │ • Validasi Gateway Secret & JWT  │
-│ • Kelola Kelas & Nilai Mahasiswa  │    │ • Sinkronisasi Transkrip Resmi   │
-│ • Panggil Gateway saat Finalisasi │    │   (Khusus role: 'service')       │
-└─────────────────┬─────────────────┘    └─────────────────┬────────────────┘
-                  │                                        │
-                  └───────────────────┬────────────────────┘
-                                      │
-                                      ▼
-                      ┌───────────────────────────────┐
-                      │      Supabase PostgreSQL      │
-                      │       (Shared Database)       │
-                      └───────────────────────────────┘
+│                   API GATEWAY (Port 3000)                              │
+│                                                                        │
+│   ┌───────────────────────────┐      ┌─────────────────────────────┐   │
+│   │ PEP (Policy Enforcement)  │ ───► │ PDP / PE (Policy Engine)    │   │
+│   │ Menahan seluruh request   │      │ Evaluasi Token, Jam, Device │   │
+│   └───────────────────────────┘      └─────────────────────────────┘   │
+│                 │                                   │                  │
+│                 │ Lolos Evaluasi                    │ Catat Keputusan  │
+│                 ▼                                   ▼                  │
+│   ┌───────────────────────────┐      ┌─────────────────────────────┐   │
+│   │ Reverse Proxy Forwarder   │      │ Audit Logger (Realtime)     │   │
+│   │ Menyisipkan Gateway Secret│      │ Simpan status ALLOW / DENY  │   │
+│   └───────────────────────────┘      └─────────────────────────────┘   │
+└──────────────────┬──────────────────────────────────┬──────────────────┘
+                   │                                  │
+    (X-Gateway-Secret, Token User)     (X-Gateway-Secret, Token Service)
+                   ▼                                  ▼
+   ┌──────────────────────────────┐   ┌──────────────────────────────┐
+   │ Service Nilai (Port 3001)    │   │ Service Transkrip (Port 3002)│
+   │ • Kelola Nilai & Kelas       │   │ • Transkrip Resmi Mahasiswa  │
+   │ • Finalisasi & Unfinalisasi  │   │ • Rekap Semua Mahasiswa      │
+   │ • Pemicu Token Antar-Layanan │   │ • Sinkronisasi Antar-Layanan │
+   └──────────────┬───────────────┘   └──────────────┬───────────────┘
+                  │                                  │
+                  │ Sinkron via Gateway              │
+                  │ (POST /transkrip/sinkron)        │
+                  └─────────────────┬────────────────┘
+                                    │
+                                    ▼
+                      ┌────────────────────────────┐
+                      │ Shared Database (Supabase) │
+                      │ Users, Grades, Audit Logs  │
+                      └────────────────────────────┘
 ```
 
 ---
 
-## 2. Fitur Zero Trust yang Diimplementasikan
+## 2. Fitur Keamanan Zero Trust Utama
 
-1. **Never Trust, Always Verify & Defense-in-Depth:**
-   - Semua request wajib masuk melalui API Gateway (Port 3000).
-   - Akses langsung ke backend service (Port 3001 & 3002) diblokir (`403 Forbidden`) menggunakan validasi header rahasia `X-Gateway-Secret`.
-   - Backend service tetap memverifikasi ulang keaslian tanda tangan dan masa berlaku JWT.
-2. **Context Verification (Perangkat Terdaftar):**
-   - Setiap request user wajib membawa header `X-Device-ID`.
-   - Jika device ID tidak cocok dengan perangkat yang terdaftar untuk akun tersebut di database, Gateway menolak request (`403 Forbidden`).
-3. **Context Verification (Jam Operasional):**
-   - Perubahan nilai (`PUT /nilai/:id`) dan finalisasi kelas (`POST /kelas/:id/finalisasi`) hanya diizinkan pada jam **07.00 – 21.00**.
-   - Dilengkapi *Time Simulator* pada header aplikasi agar pengujian di luar jam kerja dapat didemokan kapan saja.
-4. **Least Privilege & Data Isolation:**
-   - Mahasiswa hanya dapat melihat nilai dan transkrip miliknya sendiri (melihat NIM lain ditolak `403 Forbidden`).
-   - Dosen hanya dapat menginput/mengubah nilai pada kelas yang diampunya.
-   - Endpoint sinkronisasi transkrip (`POST /transkrip/sinkron`) **hanya menerima token service**. Token user mana pun ditolak.
-5. **Token Lifecycle & Revocation:**
-   - Access Token: JWT masa berlaku 10 menit.
-   - Refresh Token: JWT masa berlaku 1 hari, tersimpan di database dan dapat dicabut secara instan saat logout.
-   - Service Token: JWT masa berlaku 5 menit (`role: 'service'`) diperoleh Service Nilai via `POST /auth/service` menggunakan client credentials.
-6. **Live Audit Logging:**
-   - Setiap keputusan (`ALLOW` atau `DENY`) dicatat ke tabel `audit_logs` di database Supabase lengkap dengan waktu, subjek, endpoint, device ID, dan alasan penolakan.
+1. **Never Trust, Always Verify:**
+   - Seluruh request wajib melalui API Gateway (Port 3000).
+   - Akses langsung ke Service Nilai (3001) atau Service Transkrip (3002) tanpa melewati Gateway ditolak dengan error `403 Forbidden` (`X-Gateway-Secret missing`).
+2. **Context Verification — Perangkat Terdaftar (*Device Context*):**
+   - Klien wajib menyertakan header `X-Device-ID`.
+   - Gateway mencocokkan ID perangkat dengan whitelist di database. Perangkat ilegal (contoh: `DEV-HACKER-UNREGISTERED`) langsung diblokir (`403 Forbidden: Device Untrusted`).
+3. **Context Verification — Jam Operasional (*Temporal Context*):**
+   - Mutasi data nilai dan finalisasi kelas dibatasi hanya pada jam operasional (**07:00 – 21:00 WIB**). Request di luar jam tersebut ditolak oleh Policy Engine (`403 Forbidden: Outside working hours`).
+4. **Least Privilege Principle:**
+   - **Mahasiswa:** Hanya dapat melihat nilai dan transkrip miliknya sendiri (melihat NIM lain ditolak `403 Forbidden`).
+   - **Dosen:** Hanya dapat menginput/mengubah nilai pada kelas yang diampunya.
+   - **Admin:** Memiliki otorisasi audit untuk melihat seluruh rekap mahasiswa dan riwayat log, namun tidak dapat memanipulasi nilai kelas langsung.
+5. **Fitur Finalisasi & Buka Kunci (Unfinalisasi):**
+   - Dosen dapat mengunci nilai melalui **Finalisasi** (memicu sinkronisasi data antar-service).
+   - Dosen dapat membatalkan penguncian melalui tombol **Buka Kunci Nilai (Unfinalisasi)** jika diperlukan revisi nilai sebelum batas akhir.
+6. **Assume Breach & Service-to-Service Token:**
+   - Komunikasi antar-service (Service Nilai $\rightarrow$ Service Transkrip) wajib menggunakan **Token Service** resmi berumur 5 menit dengan klaim `role: 'service'`. Token user biasa ditolak pada endpoint sinkronisasi.
+7. **Live Gateway Audit Logging:**
+   - Setiap keputusan (`ALLOW` / `DENY`) dicatat secara realtime ke tabel `audit_logs` di Supabase lengkap dengan atribut subjek, role, endpoint, device ID, dan badge aksi CRUD (`EDIT NILAI`, `FINALISASI`, `BUKA KUNCI`, `REKAP SEMUA MHS`, dll).
 
 ---
 
-## 3. Daftar Akun Uji Coba & Device ID
+## 3. Daftar Akun & Device ID Awal
 
-Semua akun memiliki password default: **`password123`**
+Seluruh akun memiliki password default: **`password123`**
 
+### A. Akun Preset Demo Cepat di Halaman Login
 | Role | Username | Nama Lengkap | NIM / NIP | Device ID Terdaftar | Keterangan Akses |
 |---|---|---|---|---|---|
-| **Admin** | `admin_utama` | Administrator Akademik | `ADM001` | `DEV-ADMIN-01` | Dapat melihat transkrip seluruh NIM mahasiswa & audit log |
+| **Admin** | `admin_utama` | Administrator Akademik | `ADM001` | `DEV-ADMIN-01` | Rekap transkrip seluruh 10 mahasiswa & live audit log |
 | **Dosen** | `dosen_budi` | Dr. Budi Santoso, M.T. | `198001012005011001` | `DEV-DOSEN-BUDI` | Mengampu kelas: *Keamanan Informasi (KP70065004)* |
 | **Dosen** | `dosen_ani` | Ani Rahmawati, M.Kom. | `198502022008042002` | `DEV-DOSEN-ANI` | Mengampu kelas: *Jaringan Komputer Lanjut (IF40023002)* |
-| **Mahasiswa** | `mhs_andi` | Andi Pratama | `2207001` | `DEV-MHS-ANDI` | Terdaftar di Kelas Keamanan Informasi & Jaringan Komputer |
-| **Mahasiswa** | `mhs_bima` | Bima Satria | `2207002` | `DEV-MHS-BIMA` | Terdaftar di Kelas Keamanan Informasi & Jaringan Komputer |
-| **Mahasiswa** | `mhs_citra` | Citra Lestari | `2207003` | `DEV-MHS-CITRA` | Terdaftar di Kelas Keamanan Informasi |
+| **Mahasiswa** | `mhs_andi` | Andi Pratama | `2207001` | `DEV-MHS-ANDI` | Mahasiswa demo (Nilai Kelas & Transkrip pribadi) |
+| **Mahasiswa** | `mhs_bima` | Bima Satria | `2207002` | `DEV-MHS-BIMA` | Mahasiswa demo (Nilai Kelas & Transkrip pribadi) |
 
-*Catatan: Pada UI Simulator, tersedia juga opsi **`DEV-HACKER-UNREGISTERED`** untuk menguji penolakan otomatis oleh Gateway.*
+### B. Data Lengkap Seluruh Mahasiswa di Database (10 Mahasiswa)
+Tersedia 10 mahasiswa di database yang nilainya dapat dikelola di portal Dosen dan dimonitor langsung di portal Admin:
+
+| No | NIM | Nama Mahasiswa | Username | Device ID Terdaftar | Kelas Terdaftar |
+|---|---|---|---|---|---|
+| 1 | `2207001` | Andi Pratama | `mhs_andi` | `DEV-MHS-ANDI` | Keamanan Informasi, Jaringan Komputer |
+| 2 | `2207002` | Bima Satria | `mhs_bima` | `DEV-MHS-BIMA` | Keamanan Informasi, Jaringan Komputer |
+| 3 | `2207003` | Citra Lestari | `mhs_citra` | `DEV-MHS-CITRA` | Keamanan Informasi |
+| 4 | `2207004` | Dimas Wahyu Prasetyo | `mhs_dimas` | `DEV-MHS-DIMAS` | Keamanan Informasi, Jaringan Komputer |
+| 5 | `2207005` | Eka Putri Handayani | `mhs_eka` | `DEV-MHS-EKA` | Keamanan Informasi, Jaringan Komputer |
+| 6 | `2207006` | Fajar Nugraha | `mhs_fajar` | `DEV-MHS-FAJAR` | Keamanan Informasi |
+| 7 | `2207007` | Gita Ayu Saraswati | `mhs_gita` | `DEV-MHS-GITA` | Keamanan Informasi, Jaringan Komputer |
+| 8 | `2207008` | Hadi Kusuma | `mhs_hadi` | `DEV-MHS-HADI` | Keamanan Informasi |
+| 9 | `2207009` | Indah Permatasari | `mhs_indah` | `DEV-MHS-INDAH` | Keamanan Informasi |
+| 10 | `2207010` | Joko Tri Pamungkas | `mhs_joko` | `DEV-MHS-JOKO` | Keamanan Informasi |
+
+> **Catatan Pengujian Keamanan:**  
+> Pada dropdown simulator atas, tersedia pilihan **`DEV-HACKER-UNREGISTERED`** dan **`DEV-UNKNOWN-DEVICE`** untuk menguji penolakan otomatis oleh Gateway saat perangkat penyerang mencoba mengirim request.
 
 ---
 
 ## 4. Cara Menjalankan Aplikasi
 
 ### Prasyarat
-- **Node.js** (v18 ke atas)
+- **Node.js** (v18 atau lebih baru)
+- Koneksi internet aktif (untuk koneksi ke Supabase Database)
 
-### Langkah 1: Jalankan Backend Services
+### Langkah 1: Jalankan Seluruh Backend Services
 Buka terminal baru di folder `backend/`:
-```bash
+```powershell
 cd backend
 npm install
 node startAll.js
 ```
 *Script `startAll.js` akan menjalankan 3 service sekaligus:*
-- API Gateway pada `http://127.0.0.1:3000`
-- Service Nilai pada `http://127.0.0.1:3001`
-- Service Transkrip pada `http://127.0.0.1:3002`
+- **API Gateway (PEP/PDP):** `http://127.0.0.1:3000`
+- **Service Nilai:** `http://127.0.0.1:3001`
+- **Service Transkrip:** `http://127.0.0.1:3002`
 
-### Langkah 2: Jalankan Frontend React
-Buka terminal baru di folder `frontend/`:
-```bash
+*(Alternatif di Windows: cukup jalankan file `backend/run-backend.bat`).*
+
+### Langkah 2: Jalankan Frontend Web
+Buka terminal kedua di folder `frontend/`:
+```powershell
 cd frontend
 npm install
 npm run dev
 ```
-Buka browser pada alamat yang muncul (biasanya `http://localhost:5173`).
+Buka browser pada alamat: **`http://localhost:5173`**
+
+*(Alternatif di Windows: cukup jalankan file `frontend/run-frontend.bat`).*
 
 ---
 
-## 5. Panduan Skenario Rekaman Video Demo (6 - 9 Menit)
+## 5. Ringkasan Endpoint API
 
-Berikut urutan alur demo yang disarankan untuk memenuhi seluruh rubrik penilaian:
-
-### Menit 1 - 2: Penjelasan Arsitektur & Prinsip Zero Trust
-- Tunjukkan diagram arsitektur di README: jelaskan peran API Gateway sebagai **PEP & PE/PA (NIST SP 800-207)** serta pemisahan Service Nilai dan Service Transkrip.
-- Tunjukkan tabel database di dashboard Supabase (`users`, `devices`, `grades`, `transcripts`, `audit_logs`).
-
-### Menit 2 - 4: Demonstrasi Autentikasi & Verifikasi Konteks Perangkat
-1. **Login Berhasil:** Pilih akun `dosen_budi`, pastikan Device Selector di atas memilih `DEV-DOSEN-BUDI`. Klik Login $\rightarrow$ Berhasil masuk.
-2. **Uji Kasus Negatif (Device Tidak Terdaftar):** 
-   - Logout. Pilih user `dosen_budi`, lalu ganti Device Selector menjadi `DEV-HACKER-UNREGISTERED`. Klik Login.
-   - Perlihatkan pesan error: *"Perangkat tidak terdaftar untuk akun ini"*.
-   - Tunjukkan tabel **Live Audit Log** di bawah yang langsung mencatat status `DENY` dengan alasan *"Device ID is not registered"*.
-
-### Menit 4 - 6: Demonstrasi Jam Akses & Mutasi Nilai
-1. Login kembali sebagai `dosen_budi` dengan device yang benar (`DEV-DOSEN-BUDI`).
-2. **Uji Kasus Negatif (Di Luar Jam Kerja):**
-   - Pada toolbar atas, ubah Jam Akses menjadi **23:00 (Luar Jam Kerja)**.
-   - Klik tombol **Edit** pada salah satu mahasiswa dan coba simpan nilai baru.
-   - Tunjukkan bahwa request ditolak dengan pesan: *"Zero Trust Deny: Perubahan nilai hanya diizinkan pukul 07:00 - 21:00"*.
-3. **Uji Kasus Positif (Dalam Jam Kerja):**
-   - Ubah kembali jam akses ke **10:00 (Jam Kerja)**.
-   - Simpan nilai $\rightarrow$ Berhasil diperbarui.
-4. **Finalisasi Kelas & Panggilan Antar-Service:**
-   - Klik tombol **Finalisasi & Sinkron**.
-   - Jelaskan kode di balik tombol ini: Service Nilai meminta Service Token ke Gateway (`POST /auth/service`), lalu mengirim request ke `POST /transkrip/sinkron` melalui Gateway. Nilai kelas kini terkunci.
-
-### Menit 6 - 8: Demonstrasi Least Privilege (Mahasiswa & Admin)
-1. Logout dan login sebagai `mhs_andi` (Device: `DEV-MHS-ANDI`).
-   - Tunjukkan bahwa mahasiswa dapat melihat nilai dan transkrip resmi miliknya sendiri.
-   - Buka DevTools/Console atau jelaskan bahwa mahasiswa tidak bisa mengakses transkrip mahasiswa lain (`2207002`).
-2. Logout dan login sebagai `admin_utama` (Device: `DEV-ADMIN-01`).
-   - Tunjukkan fitur pencarian transkrip berdasarkan NIM mahasiswa manapun (`2207001`, `2207002`, `2207003`).
-
-### Menit 8 - 9: Demonstrasi Defense-in-Depth & Kesimpulan
-1. **Direct Access Bypass Prevention:**
-   - Tunjukkan pengujian via curl/terminal: mencoba memanggil `http://127.0.0.1:3001/nilai` secara langsung tanpa melalui gateway $\rightarrow$ ditolak karena tidak ada header `X-Gateway-Secret`.
-2. Tunjukkan **Live Audit Log** lengkap di portal Admin yang mencatat seluruh histori pengujian tadi.
+| Layanan | Method | Endpoint | Hak Akses (Role) | Keterangan |
+|---|---|---|---|---|
+| **Gateway** | `POST` | `/auth/login` | Publik (Header Device wajib) | Autentikasi user & penerbitan token |
+| **Gateway** | `POST` | `/auth/refresh` | User terotentikasi | Perpanjangan access token |
+| **Gateway** | `POST` | `/auth/logout` | User terotentikasi | Pencabutan refresh token |
+| **Gateway** | `POST` | `/auth/service` | Internal service credentials | Penerbitan token antar-service |
+| **Gateway** | `GET` | `/api/audit-logs` | Publik / Admin | Rekam jejak evaluasi PEP real-time |
+| **Gateway** | `GET` | `/api/devices/all` | Publik (Simulator HUD) | Daftar whitelist perangkat |
+| **Service Nilai** | `GET` | `/kelas` | Dosen | Mengambil kelas yang diampu |
+| **Service Nilai** | `GET` | `/nilai` | Dosen / Mahasiswa | Nilai kelas berjalan |
+| **Service Nilai** | `PUT` | `/nilai/:id` | Dosen (Jam Kerja) | Update nilai Tugas/UTS/UAS |
+| **Service Nilai** | `POST` | `/kelas/:id/finalisasi` | Dosen (Jam Kerja) | Kunci nilai & pemicu sinkronisasi |
+| **Service Nilai** | `POST` | `/kelas/:id/unfinalisasi` | Dosen (Jam Kerja) / Admin | Buka kunci nilai untuk revisi |
+| **Service Transkrip** | `GET` | `/transkrip/:nim` | Mahasiswa (Milik sendiri) / Admin | Transkrip resmi perorangan |
+| **Service Transkrip** | `GET` | `/transkrip/all` | Admin | Rekap seluruh 10 mahasiswa |
+| **Service Transkrip** | `POST` | `/transkrip/sinkron` | Service Token (`role: service`) | Menerima sinkronisasi nilai resmi |
